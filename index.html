@@ -543,14 +543,14 @@
 <div class="container">
 
   <div class="tabs">
-    <button class="tab active" onclick="showTab('rules')">📖 Rules</button>
-    <button class="tab" onclick="showTab('journal')">📔 Journal Entry</button>
-    <button class="tab" onclick="showTab('ledger')">📒 Ledger</button>
-    <button class="tab" onclick="showTab('trial')">⚖️ Trial Balance</button>
-    <button class="tab" onclick="showTab('pl')">📊 P&L Account</button>
-    <button class="tab" onclick="showTab('balance')">🏛️ Balance Sheet</button>
-    <button class="tab" onclick="showTab('depreciation')">📉 Depreciation</button>
-    <button class="tab" onclick="showTab('gst')">🧾 GST Calculator</button>
+    <button class="tab active" onclick="showTab('rules', this)">📖 Rules</button>
+    <button class="tab" onclick="showTab('journal', this)">📔 Journal Entry</button>
+    <button class="tab" onclick="showTab('ledger', this)">📒 Ledger</button>
+    <button class="tab" onclick="showTab('trial', this)">⚖️ Trial Balance</button>
+    <button class="tab" onclick="showTab('pl', this)">📊 P&L Account</button>
+    <button class="tab" onclick="showTab('balance', this)">🏛️ Balance Sheet</button>
+    <button class="tab" onclick="showTab('depreciation', this)">📉 Depreciation</button>
+    <button class="tab" onclick="showTab('gst', this)">🧾 GST Calculator</button>
   </div>
 
   <!-- RULES PANEL -->
@@ -897,11 +897,20 @@
     return '₹' + Number(n).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
-  function showTab(id) {
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function showTab(id, btn) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    event.target.classList.add('active');
+    btn.classList.add('active');
   }
 
   // ---- Journal ----
@@ -920,6 +929,7 @@
     if (!drAccount) { alert.innerHTML = '<div class="alert alert-error">Please enter the Debit Account.</div>'; return; }
     if (!crAccount) { alert.innerHTML = '<div class="alert alert-error">Please enter the Credit Account.</div>'; return; }
     if (drAmount <= 0) { alert.innerHTML = '<div class="alert alert-error">Debit amount must be greater than zero.</div>'; return; }
+    if (crAmount <= 0) { alert.innerHTML = '<div class="alert alert-error">Credit amount must be greater than zero.</div>'; return; }
     if (Math.abs(drAmount - crAmount) > 0.01) {
       alert.innerHTML = '<div class="alert alert-error">Debit and Credit amounts must be equal (Double Entry System).</div>'; return;
     }
@@ -965,17 +975,17 @@
       totalCr += e.crAmount;
       html += `
         <tr>
-          <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--gold);">${e.date}</td>
+          <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--gold);">${escHtml(e.date)}</td>
           <td>
             <div style="font-family:'DM Mono',monospace;font-size:13px;">
-              <span class="badge badge-dr">Dr</span> ${e.drAccount}
+              <span class="badge badge-dr">Dr</span> ${escHtml(e.drAccount)}
             </div>
             <div style="font-family:'DM Mono',monospace;font-size:13px;margin-top:4px;padding-left:16px;">
-              <span class="badge badge-cr">Cr</span> ${e.crAccount}
+              <span class="badge badge-cr">Cr</span> ${escHtml(e.crAccount)}
             </div>
-            ${e.narration ? `<div style="font-size:11px;color:#888;font-style:italic;margin-top:4px;padding-left:16px;">${e.narration}</div>` : ''}
+            ${e.narration ? `<div style="font-size:11px;color:#888;font-style:italic;margin-top:4px;padding-left:16px;">${escHtml(e.narration)}</div>` : ''}
           </td>
-          <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);">${e.voucher}</td>
+          <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);">${escHtml(e.voucher)}</td>
           <td class="num amount-dr">${fmt(e.drAmount)}</td>
           <td class="num amount-cr">${fmt(e.crAmount)}</td>
           <td><button class="btn btn-danger" onclick="deleteEntry(${i})">Del</button></td>
@@ -1008,7 +1018,7 @@
     let html = `
       <div style="border:2px solid var(--ink);margin-top:8px;">
         <div style="background:var(--ink);color:var(--paper);padding:12px 20px;font-family:'Playfair Display',serif;font-size:18px;text-align:center;font-weight:700;">
-          ${document.getElementById('l-account-name').value} (T-Account)
+          ${escHtml(document.getElementById('l-account-name').value)} (T-Account)
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;">
           <div style="padding:16px;border-right:1.5px solid var(--ink);">
@@ -1016,7 +1026,7 @@
     `;
     drEntries.forEach(e => {
       html += `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--ledger);font-family:'DM Mono',monospace;font-size:12px;">
-        <span>${e.date} — ${e.crAccount}</span><span class="amount-dr">${fmt(e.drAmount)}</span></div>`;
+        <span>${escHtml(e.date)} — ${escHtml(e.crAccount)}</span><span class="amount-dr">${fmt(e.drAmount)}</span></div>`;
     });
     html += `
         <div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;border-top:2px solid var(--ink);margin-top:8px;">
@@ -1028,7 +1038,7 @@
     `;
     crEntries.forEach(e => {
       html += `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--ledger);font-family:'DM Mono',monospace;font-size:12px;">
-        <span>${e.date} — ${e.drAccount}</span><span class="amount-cr">${fmt(e.crAmount)}</span></div>`;
+        <span>${escHtml(e.date)} — ${escHtml(e.drAccount)}</span><span class="amount-cr">${fmt(e.crAmount)}</span></div>`;
     });
     html += `
         <div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;border-top:2px solid var(--ink);margin-top:8px;">
@@ -1069,7 +1079,7 @@
       totalDr += netDr;
       totalCr += netCr;
       rows += `<tr>
-        <td style="font-family:'DM Mono',monospace;">${name}</td>
+        <td style="font-family:'DM Mono',monospace;">${escHtml(name)}</td>
         <td class="num amount-dr">${netDr > 0 ? fmt(netDr) : '—'}</td>
         <td class="num amount-cr">${netCr > 0 ? fmt(netCr) : '—'}</td>
       </tr>`;
@@ -1110,6 +1120,7 @@
     const netSales = sales - returnsIn;
     const cogsSold = openingStock + purchases + directExp - closingStock;
     const grossProfit = netSales - cogsSold;
+    const isGrossProfit = grossProfit >= 0;
     const totalIndirectExp = wages + rent + depreciation;
     const netProfit = grossProfit + otherIncome - totalIndirectExp;
 
@@ -1124,17 +1135,22 @@
             ${plRow('Opening Stock', openingStock)}
             ${plRow('Purchases', purchases)}
             ${plRow('Direct Expenses', directExp)}
+            ${!isGrossProfit ? plRowBold('Gross Loss (c/d)', Math.abs(grossProfit), 'amount-dr') : ''}
+            <div style="border-top:2px solid var(--ink);margin:8px 0;"></div>
             ${plRow('Wages & Salaries', wages)}
             ${plRow('Rent & Rates', rent)}
             ${plRow('Depreciation', depreciation)}
-            ${isProfit ? plRow('<strong>Net Profit (transferred to Capital)</strong>', netProfit, 'amount-cr') : ''}
+            ${isProfit ? plRowBold('Net Profit (transferred to Capital)', netProfit, 'amount-cr') : ''}
           </div>
           <div style="padding:20px;">
             <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--green);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;">Cr. — Income</div>
             ${plRow('Sales (Net of Returns)', netSales, 'amount-cr')}
             ${plRow('Closing Stock', closingStock, 'amount-cr')}
+            ${isGrossProfit ? plRowBold('Gross Profit (c/d)', grossProfit, 'amount-cr') : ''}
+            <div style="border-top:2px solid var(--ink);margin:8px 0;"></div>
+            ${isGrossProfit ? plRow('Gross Profit (b/d)', grossProfit, 'amount-cr') : ''}
             ${plRow('Other Income', otherIncome, 'amount-cr')}
-            ${!isProfit ? plRow('<strong>Net Loss (transferred to Capital)</strong>', Math.abs(netProfit), 'amount-dr') : ''}
+            ${!isProfit ? plRowBold('Net Loss (transferred to Capital)', Math.abs(netProfit), 'amount-dr') : ''}
           </div>
         </div>
         <div class="profit-loss-box ${isProfit ? 'profit' : 'loss'}" style="background:${isProfit ? '#e8f4ee' : '#fde8e8'};border-top:1.5px solid var(--ink);">
@@ -1148,7 +1164,14 @@
   function plRow(label, amount, cls = '') {
     if (amount === 0) return '';
     return `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--ledger);font-family:'DM Mono',monospace;font-size:12px;">
-      <span>${label}</span><span class="${cls}">${fmt(amount)}</span>
+      <span>${escHtml(label)}</span><span class="${cls}">${fmt(amount)}</span>
+    </div>`;
+  }
+
+  function plRowBold(label, amount, cls = '') {
+    if (amount === 0) return '';
+    return `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--ledger);font-family:'DM Mono',monospace;font-size:12px;font-weight:700;">
+      <span>${escHtml(label)}</span><span class="${cls}">${fmt(amount)}</span>
     </div>`;
   }
 
@@ -1223,14 +1246,13 @@
     if (method === 'slm') {
       const annualDep = (cost - salvage) / life;
       const depRate = ((cost - salvage) / cost / life * 100).toFixed(2);
-      let bookValue = cost;
       for (let y = 1; y <= life; y++) {
-        bookValue -= annualDep;
-        rows += `<div class="dep-line"><span>Year ${y}</span><span class="val">${fmt(annualDep)}</span><span>${fmt(Math.max(bookValue, salvage))}</span></div>`;
+        const bookValue = Math.max(cost - y * annualDep, salvage);
+        rows += `<div class="dep-line"><span>Year ${y}</span><span class="val">${fmt(annualDep)}</span><span>${fmt(bookValue)}</span></div>`;
       }
       table = `
         <div class="dep-result">
-          <h3>${asset} — Straight Line Method (SLM)</h3>
+          <h3>${escHtml(asset)} — Straight Line Method (SLM)</h3>
           <div class="dep-line"><span>Cost of Asset</span><span class="val">${fmt(cost)}</span></div>
           <div class="dep-line"><span>Salvage Value</span><span class="val">${fmt(salvage)}</span></div>
           <div class="dep-line"><span>Depreciable Amount</span><span class="val">${fmt(cost - salvage)}</span></div>
@@ -1247,14 +1269,15 @@
     } else {
       let bookValue = cost;
       for (let y = 1; y <= life; y++) {
-        const dep = bookValue * (rate / 100);
+        const rawDep = bookValue * (rate / 100);
+        const dep = Math.min(rawDep, Math.max(bookValue - salvage, 0));
         bookValue -= dep;
-        rows += `<div class="dep-line"><span>Year ${y}</span><span class="val">${fmt(dep)}</span><span>${fmt(Math.max(bookValue, 0))}</span></div>`;
+        rows += `<div class="dep-line"><span>Year ${y}</span><span class="val">${fmt(dep)}</span><span>${fmt(bookValue)}</span></div>`;
         if (bookValue <= salvage) break;
       }
       table = `
         <div class="dep-result">
-          <h3>${asset} — Written Down Value Method (WDV)</h3>
+          <h3>${escHtml(asset)} — Written Down Value Method (WDV)</h3>
           <div class="dep-line"><span>Cost of Asset</span><span class="val">${fmt(cost)}</span></div>
           <div class="dep-line"><span>WDV Rate</span><span class="val">${rate}% p.a.</span></div>
           <div style="margin-top:16px;font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Year-wise Schedule</div>
