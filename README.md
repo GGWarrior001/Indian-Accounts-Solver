@@ -4,7 +4,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![HTML](https://img.shields.io/badge/built%20with-HTML%2FCSS%2FJS-orange)
-![No Dependencies](https://img.shields.io/badge/dependencies-none-brightgreen)
+![SheetJS](https://img.shields.io/badge/excel%20export-SheetJS-blue)
 
 ---
 
@@ -13,13 +13,15 @@
 | Module | Description |
 |---|---|
 | 📖 **Golden Rules** | Visual reference for Real, Personal & Nominal account rules |
-| 📔 **Journal Entry** | Double-entry bookkeeping with Dr = Cr validation |
+| 📔 **Journal Entry** | Double-entry bookkeeping with Dr = Cr validation, CSV & Excel export |
 | 📒 **Ledger (T-Account)** | Auto-generated from journal entries |
 | ⚖️ **Trial Balance** | Auto-checks if books are balanced |
 | 📊 **P&L Account** | Trading & Profit & Loss with Gross/Net Profit |
 | 🏛️ **Balance Sheet** | As per Schedule III, Companies Act 2013 |
 | 📉 **Depreciation** | SLM & WDV methods with year-wise schedule |
 | 🧾 **GST Calculator** | CGST + SGST / IGST as per GST Act 2017 |
+| 💾 **Data Persistence** | Journal entries auto-saved to `localStorage` across sessions |
+| 📱 **Mobile Responsive** | Optimised layout for phones and tablets |
 
 ---
 
@@ -28,8 +30,8 @@
 ### Option 1 — Open directly in browser (no setup needed)
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/indian-accounts-solver.git
-cd indian-accounts-solver
+git clone https://github.com/GGWarrior001/Indian-Accounts-Solver.git
+cd Indian-Accounts-Solver
 # Open index.html in any browser
 open index.html         # macOS
 start index.html        # Windows
@@ -41,7 +43,7 @@ xdg-open index.html     # Linux
 1. Fork this repository
 2. Go to **Settings → Pages**
 3. Set source to `main` branch, `/ (root)`
-4. Your tool will be live at `https://YOUR_USERNAME.github.io/indian-accounts-solver`
+4. Your tool will be live at `https://YOUR_USERNAME.github.io/Indian-Accounts-Solver`
 
 ---
 
@@ -93,7 +95,10 @@ xdg-open index.html     # Linux
 - Records transactions following the double-entry system
 - Validates that Debit Amount = Credit Amount before saving
 - Supports Voucher/Reference numbers and Narration
-- All entries persist within the session for use in Ledger & Trial Balance
+- All entries **persist automatically via `localStorage`** — survive page refreshes and browser restarts
+- **Export to CSV** or **Excel (.xlsx)** with one click
+- **Load Sample Data** button provides pre-filled example transactions for quick exploration
+- **Clear Saved Data** button resets the journal with a confirmation prompt
 
 ### Ledger (T-Account)
 - Auto-posts from journal entries by matching account names
@@ -133,6 +138,7 @@ xdg-open index.html     # Linux
 indian-accounts-solver/
 ├── index.html          # Main application (single-file, no build needed)
 ├── README.md           # This file
+├── CONTRIBUTING.md     # Contribution guidelines
 ├── LICENSE             # MIT License
 └── .gitignore          # Git ignore rules
 ```
@@ -142,8 +148,9 @@ indian-accounts-solver/
 ## 🛠️ Tech Stack
 
 - **Pure HTML5, CSS3, Vanilla JavaScript** — zero dependencies, zero build tools
+- **SheetJS (xlsx-0.20.0)** — Excel export (loaded via CDN)
 - **Google Fonts** — Playfair Display, DM Mono, Noto Sans (loaded via CDN)
-- Works entirely **offline** after first load (except fonts)
+- Works entirely **offline** after first load (except fonts and SheetJS CDN)
 
 ---
 
@@ -151,14 +158,16 @@ indian-accounts-solver/
 
 Contributions are welcome! Here are some ideas for improvements:
 
-- [ ] Add export to PDF / Excel
+- [x] ~~Add export to Excel~~ — done (CSV + .xlsx via SheetJS)
+- [x] ~~Add data persistence via localStorage~~ — done (auto-saved journal entries)
+- [x] ~~Add mobile-responsive layout~~ — done
+- [ ] Add export to PDF
+- [ ] Add print-friendly CSS
 - [ ] Add multi-year financial statements
 - [ ] Add ratio analysis (Current Ratio, Quick Ratio, etc.)
 - [ ] Add support for partnership accounts (P&L Appropriation)
 - [ ] Add TDS calculation
 - [ ] Add dark mode
-- [ ] Add data persistence via localStorage
-- [ ] Add print-friendly CSS
 
 ### How to contribute
 
@@ -173,6 +182,8 @@ git commit -m "feat: add financial ratio analysis module"
 # 4. Push and open a Pull Request
 git push origin feature/add-ratio-analysis
 ```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for full contribution guidelines.
 
 ---
 
