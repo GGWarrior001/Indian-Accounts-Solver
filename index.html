@@ -4,156 +4,242 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Indian Accounts Solver — भारतीय लेखा</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Noto+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Noto+Sans:wght@300;400;600&display=swap" rel="stylesheet">
 <!-- NEW: SheetJS CDN for Excel export -->
 <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
 <style>
+  /* ==========================================================
+     THEME — LUXURIOUS BLACK & BLUE
+     Indian Accounts Solver  |  v2.0
+     ========================================================== */
   :root {
-    --ink: #1a0a00;
-    --paper: #fdf6e3;
-    --saffron: #ff6b1a;
-    --gold: #c8922a;
-    --green: #1a7a4a;
-    --red: #c0392b;
-    --ledger: #e8dcc8;
-    --rule: #b8a888;
-    --accent: #ff6b1a;
+    /* ── Design tokens ── */
+    --bg-deep:        #050508;
+    --bg-card:        rgba(12, 18, 30, 0.72);
+    --accent-blue:    #3b82f6;
+    --accent-cyan:    #06b6d4;
+    --accent-glow:    rgba(59, 130, 246, 0.20);
+    --text-primary:   #e2e8f0;
+    --text-secondary: #94a3b8;
+    --radius-lg:      14px;
+    --shadow-soft:    0 4px 24px rgba(59, 130, 246, 0.12);
+    --header-height:        81px;   /* desktop header rendered height */
+    --header-height-mobile: 65px;   /* mobile header rendered height  */
+
+    /* ── Legacy variable remaps (referenced by JS-generated inline styles) ── */
+    --ink:    #060c18;          /* dark blue-black  → section headers      */
+    --paper:  #dbeafe;          /* light blue-white → text on dark headers */
+    --saffron:#3b82f6;          /* blue replaces orange accent              */
+    --gold:   #60a5fa;          /* lighter blue replaces gold               */
+    --green:  #10b981;          /* credit / positive amounts                */
+    --red:    #f87171;          /* debit  / negative amounts                */
+    --ledger: rgba(59, 130, 246, 0.08);   /* subtle blue-tinted background */
+    --rule:   rgba(100, 180, 255, 0.18);  /* blue-tinted border             */
+    --accent: #3b82f6;
   }
 
+  /* ── Reset ── */
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  /* ── Body & animated background ── */
   body {
-    background: var(--paper);
-    color: var(--ink);
-    font-family: 'Noto Sans', sans-serif;
-    min-height: 100vh;
+    background: var(--bg-deep);
     background-image:
-      repeating-linear-gradient(0deg, transparent, transparent 27px, var(--rule) 27px, var(--rule) 28px),
-      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8922a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      radial-gradient(ellipse 90% 60% at  0%   0%, rgba(30,  58, 138, 0.22) 0%, transparent 55%),
+      radial-gradient(ellipse 70% 55% at 100% 100%, rgba(14, 165, 233, 0.14) 0%, transparent 55%);
+    color: var(--text-primary);
+    font-family: 'Inter', 'Noto Sans', sans-serif;
+    min-height: 100vh;
   }
 
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 15% 85%, rgba(59, 130, 246, 0.05) 0%, transparent 40%),
+      radial-gradient(circle at 85% 15%, rgba(6,  182, 212, 0.04) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+    animation: meshDrift 18s ease-in-out infinite alternate;
+  }
+
+  @keyframes meshDrift {
+    from { transform: scale(1);    opacity: 0.6; }
+    to   { transform: scale(1.08); opacity: 1;   }
+  }
+
+  /* ── Header ── */
   header {
-    background: var(--ink);
-    color: var(--paper);
-    padding: 24px 40px;
+    background: rgba(5, 8, 18, 0.88);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    color: var(--text-primary);
+    padding: 18px 40px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 4px solid var(--saffron);
+    border-bottom: 1px solid rgba(100, 180, 255, 0.12);
     position: sticky;
     top: 0;
     z-index: 100;
+    box-shadow: 0 2px 32px rgba(0, 0, 0, 0.50);
   }
 
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
+  .logo { display: flex; align-items: center; gap: 16px; }
 
   .logo-icon {
-    width: 48px;
-    height: 48px;
-    background: var(--saffron);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-cyan) 100%);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.40), 0 0 6px rgba(6, 182, 212, 0.30);
   }
 
   .logo-text h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    font-weight: 900;
-    letter-spacing: 1px;
+    font-family: 'Inter', sans-serif;
+    font-size: 20px; font-weight: 700;
+    letter-spacing: -0.4px;
+    color: var(--text-primary);
   }
 
   .logo-text p {
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--gold);
-    letter-spacing: 2px;
+    font-size: 10px;
+    color: var(--text-secondary);
+    letter-spacing: 1.5px;
     text-transform: uppercase;
   }
 
   .header-badge {
-    background: var(--saffron);
-    color: white;
+    background: rgba(59, 130, 246, 0.12);
+    border: 1px solid rgba(59, 130, 246, 0.28);
+    color: #93c5fd;
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
+    font-size: 10px;
     padding: 6px 14px;
-    border-radius: 2px;
+    border-radius: 20px;
     letter-spacing: 1px;
     text-transform: uppercase;
   }
 
+  /* ── Container ── */
   .container {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 40px 24px;
+    padding: 36px 24px;
+    position: relative;
+    z-index: 1;
   }
 
+  /* ── Tabs bar ── */
   .tabs {
     display: flex;
-    gap: 0;
-    margin-bottom: 32px;
-    border-bottom: 2px solid var(--ink);
+    gap: 4px;
+    margin-bottom: 28px;
+    background: rgba(10, 16, 28, 0.75);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(100, 180, 255, 0.11);
+    border-radius: 12px;
+    padding: 6px;
     flex-wrap: wrap;
+    position: sticky;
+    top: var(--header-height);
+    z-index: 90;
+    box-shadow: var(--shadow-soft);
   }
 
   .tab {
-    padding: 12px 24px;
+    padding: 9px 16px;
     cursor: pointer;
     font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 1px;
+    font-size: 10px;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
-    border: 2px solid transparent;
-    border-bottom: none;
+    border: 1px solid transparent;
     background: transparent;
-    color: var(--ink);
-    transition: all 0.15s;
-    margin-bottom: -2px;
+    color: var(--text-secondary);
+    border-radius: 8px;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 44px;
+    white-space: nowrap;
   }
 
-  .tab:hover { background: var(--ledger); }
+  .tab:hover {
+    background: rgba(59, 130, 246, 0.09);
+    color: var(--text-primary);
+  }
+
   .tab.active {
-    background: var(--ink);
-    color: var(--paper);
-    border-color: var(--ink);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.24) 0%, rgba(6, 182, 212, 0.14) 100%);
+    color: #93c5fd;
+    border-color: rgba(59, 130, 246, 0.32);
+    box-shadow: 0 0 14px rgba(59, 130, 246, 0.18);
+    transform: scale(1.04);
   }
 
+  /* ── Panels ── */
   .panel { display: none; }
-  .panel.active { display: block; }
+  .panel.active {
+    display: block;
+    animation: fadeUp 0.38s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
 
-  /* ---- JOURNAL ENTRY ---- */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0);    }
+  }
+
+  /* ── Card / glassmorphism panel ── */
   .card {
-    background: white;
-    border: 1px solid var(--rule);
-    border-top: 4px solid var(--saffron);
+    background: var(--bg-card);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(100, 180, 255, 0.12);
+    border-radius: var(--radius-lg);
     padding: 32px;
     margin-bottom: 24px;
-    box-shadow: 4px 4px 0 var(--ledger);
+    box-shadow: var(--shadow-soft), 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.40s cubic-bezier(0.4, 0, 0.2, 1) both;
   }
 
+  /* Gradient accent line at top of every card */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan), transparent 80%);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  /* Staggered entrance per card sibling */
+  .card:nth-child(1) { animation-delay: 0s;    }
+  .card:nth-child(2) { animation-delay: 0.06s; }
+  .card:nth-child(3) { animation-delay: 0.12s; }
+
   .card h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 6px;
-    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 20px; font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
   }
 
   .card .subtitle {
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--gold);
-    letter-spacing: 2px;
+    font-size: 10px;
+    color: var(--text-secondary);
+    letter-spacing: 1.5px;
     text-transform: uppercase;
     margin-bottom: 24px;
   }
 
+  /* ── Form grid ── */
   .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -163,71 +249,111 @@
 
   @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
 
+  /* ── Labels ── */
   label {
     display: block;
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: 1px;
     text-transform: uppercase;
-    color: var(--gold);
+    color: var(--text-secondary);
     margin-bottom: 6px;
   }
 
+  /* ── Inputs, selects, textareas ── */
   input, select, textarea {
     width: 100%;
-    padding: 10px 14px;
-    border: 1.5px solid var(--rule);
-    background: var(--paper);
+    padding: 11px 14px;
+    border: 1px solid rgba(100, 180, 255, 0.16);
+    background: rgba(8, 12, 22, 0.75);
     font-family: 'DM Mono', monospace;
     font-size: 13px;
-    color: var(--ink);
+    color: var(--text-primary);
     outline: none;
-    transition: border-color 0.15s;
+    border-radius: 8px;
+    transition: border-color 0.22s, box-shadow 0.22s, background 0.22s;
+    min-height: 44px;
   }
 
   input:focus, select:focus, textarea:focus {
-    border-color: var(--saffron);
-    background: white;
+    border-color: rgba(59, 130, 246, 0.55);
+    background: rgba(8, 12, 22, 0.92);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.11), 0 0 20px rgba(59, 130, 246, 0.07);
   }
 
+  input::placeholder { color: rgba(148, 163, 184, 0.45); }
+  select option { background: #0d1420; color: var(--text-primary); }
+
+  /* ── Buttons ── */
   .btn {
-    padding: 12px 28px;
+    padding: 12px 26px;
     border: none;
     cursor: pointer;
     font-family: 'DM Mono', monospace;
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: 1px;
     text-transform: uppercase;
-    transition: all 0.15s;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 8px;
+    min-height: 44px;
+    position: relative;
+    overflow: hidden;
   }
+
+  /* Shine-sweep on hover */
+  .btn::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.09), transparent);
+    transition: left 0.40s ease;
+  }
+  .btn:hover::after { left: 140%; }
+  .btn:hover  { transform: translateY(-1px); }
+  .btn:active { transform: scale(0.97); }
 
   .btn-primary {
-    background: var(--ink);
-    color: var(--paper);
+    background: linear-gradient(135deg, #2563eb 0%, #0891b2 100%);
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(59, 130, 246, 0.32);
   }
-
-  .btn-primary:hover { background: #2d1a0a; }
+  .btn-primary:hover { box-shadow: 0 6px 28px rgba(59, 130, 246, 0.50); }
 
   .btn-secondary {
-    background: transparent;
-    color: var(--ink);
-    border: 1.5px solid var(--ink);
+    background: rgba(59, 130, 246, 0.09);
+    color: #93c5fd;
+    border: 1px solid rgba(59, 130, 246, 0.22);
   }
-
-  .btn-secondary:hover { background: var(--ledger); }
+  .btn-secondary:hover {
+    background: rgba(59, 130, 246, 0.16);
+    border-color: rgba(59, 130, 246, 0.38);
+  }
 
   .btn-danger {
-    background: var(--red);
-    color: white;
+    background: rgba(239, 68, 68, 0.12);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.25);
     font-size: 11px;
-    padding: 6px 14px;
+    padding: 8px 16px;
+  }
+  .btn-danger:hover {
+    background: rgba(239, 68, 68, 0.22);
+    border-color: rgba(239, 68, 68, 0.45);
   }
 
-  /* ---- LEDGER TABLE ---- */
+  /* ── Ledger table ── */
   .ledger-wrap {
     overflow-x: auto;
     margin-bottom: 24px;
+    border-radius: 10px;
+    border: 1px solid rgba(100, 180, 255, 0.11);
   }
+
+  /* Custom dark scrollbar */
+  .ledger-wrap::-webkit-scrollbar { height: 4px; }
+  .ledger-wrap::-webkit-scrollbar-track { background: rgba(10, 15, 28, 0.6); }
+  .ledger-wrap::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.38); border-radius: 2px; }
 
   .ledger-table {
     width: 100%;
@@ -236,88 +362,86 @@
     font-size: 13px;
   }
 
-  .ledger-table thead tr {
-    background: var(--ink);
-    color: var(--paper);
-  }
+  .ledger-table thead tr { background: rgba(20, 40, 90, 0.70); }
 
   .ledger-table th {
-    padding: 12px 16px;
+    padding: 13px 16px;
     text-align: left;
-    font-size: 11px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    font-weight: 500;
-    white-space: nowrap;
-  }
-
-  .ledger-table th.num, .ledger-table td.num {
-    text-align: right;
-  }
-
-  .ledger-table tbody tr {
-    border-bottom: 1px solid var(--ledger);
-    transition: background 0.1s;
-  }
-
-  .ledger-table tbody tr:hover { background: #fef9f0; }
-
-  .ledger-table td {
-    padding: 11px 16px;
-    vertical-align: middle;
-  }
-
-  .badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 2px;
     font-size: 10px;
     letter-spacing: 1px;
     text-transform: uppercase;
     font-weight: 600;
+    white-space: nowrap;
+    color: #93c5fd;
+    border-bottom: 1px solid rgba(100, 180, 255, 0.18);
   }
 
-  .badge-dr { background: #fde8e8; color: var(--red); }
-  .badge-cr { background: #e8f4ee; color: var(--green); }
+  .ledger-table th.num, .ledger-table td.num { text-align: right; }
 
-  .amount-dr { color: var(--red); font-weight: 600; }
-  .amount-cr { color: var(--green); font-weight: 600; }
+  .ledger-table tbody tr {
+    border-bottom: 1px solid rgba(100, 180, 255, 0.06);
+    transition: background 0.15s;
+  }
+  .ledger-table tbody tr:hover { background: rgba(59, 130, 246, 0.07); }
 
-  /* ---- TOTALS ---- */
+  .ledger-table td {
+    padding: 12px 16px;
+    vertical-align: middle;
+    color: var(--text-primary);
+  }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .badge-dr { background: rgba(248, 113, 113, 0.14); color: #fca5a5; border: 1px solid rgba(248, 113, 113, 0.22); }
+  .badge-cr { background: rgba(16, 185, 129, 0.14);  color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.22); }
+  .amount-dr { color: #fca5a5; font-weight: 600; }
+  .amount-cr { color: #6ee7b7; font-weight: 600; }
+
+  /* ── Totals row ── */
   .totals-row td {
     font-weight: 700 !important;
-    border-top: 2px solid var(--ink) !important;
-    font-size: 14px !important;
+    border-top: 1px solid rgba(100, 180, 255, 0.22) !important;
+    font-size: 13px !important;
+    background: rgba(30, 58, 138, 0.18) !important;
+    color: var(--text-primary) !important;
   }
 
-  /* ---- BALANCE SHEET LAYOUT ---- */
+  /* ── Balance-sheet grid ── */
   .bs-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0;
-    border: 1.5px solid var(--ink);
+    border: 1px solid rgba(100, 180, 255, 0.13);
+    border-radius: 10px;
+    overflow: hidden;
   }
 
   @media (max-width: 700px) { .bs-grid { grid-template-columns: 1fr; } }
 
   .bs-side {
     padding: 24px;
+    background: rgba(8, 12, 24, 0.45);
   }
-
-  .bs-side:first-child {
-    border-right: 1.5px solid var(--ink);
-  }
+  .bs-side:first-child { border-right: 1px solid rgba(100, 180, 255, 0.11); }
 
   .bs-side h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--saffron);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: #93c5fd;
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-bottom: 16px;
     padding-bottom: 10px;
-    border-bottom: 1px solid var(--ledger);
+    border-bottom: 1px solid rgba(100, 180, 255, 0.12);
   }
 
   .bs-item {
@@ -325,26 +449,25 @@
     justify-content: space-between;
     align-items: center;
     padding: 8px 0;
-    border-bottom: 1px dashed var(--ledger);
+    border-bottom: 1px dashed rgba(100, 180, 255, 0.09);
     font-family: 'DM Mono', monospace;
     font-size: 13px;
   }
-
-  .bs-item .label { color: var(--ink); }
-  .bs-item .value { font-weight: 600; }
+  .bs-item .label { color: var(--text-secondary); }
+  .bs-item .value { font-weight: 600; color: var(--text-primary); }
 
   .bs-total {
     display: flex;
     justify-content: space-between;
     padding: 12px 0;
     font-family: 'DM Mono', monospace;
-    font-size: 14px;
-    font-weight: 700;
-    border-top: 2px solid var(--ink);
+    font-size: 14px; font-weight: 700;
+    border-top: 1px solid rgba(100, 180, 255, 0.22);
     margin-top: 8px;
+    color: #93c5fd;
   }
 
-  /* ---- RULES SIDEBAR ---- */
+  /* ── Golden rules grid ── */
   .rules-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -352,16 +475,28 @@
   }
 
   .rule-card {
-    border: 1.5px solid var(--rule);
+    background: rgba(12, 20, 38, 0.70);
+    border: 1px solid rgba(100, 180, 255, 0.12);
+    border-radius: 10px;
     padding: 20px;
-    background: white;
+    transition: border-color 0.22s, transform 0.22s, box-shadow 0.22s;
+    animation: fadeUp 0.40s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  .rule-card:nth-child(1) { animation-delay: 0s;    }
+  .rule-card:nth-child(2) { animation-delay: 0.07s; }
+  .rule-card:nth-child(3) { animation-delay: 0.14s; }
+
+  .rule-card:hover {
+    border-color: rgba(59, 130, 246, 0.30);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(59, 130, 246, 0.13);
   }
 
   .rule-card .rule-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px; font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--text-primary);
   }
 
   .rule-card .rule-meta {
@@ -370,13 +505,13 @@
     color: var(--gold);
     letter-spacing: 1px;
     text-transform: uppercase;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   .rule-card p {
     font-size: 13px;
     line-height: 1.7;
-    color: #3a2a1a;
+    color: var(--text-secondary);
   }
 
   .rule-card .dr-cr-table {
@@ -388,118 +523,113 @@
 
   .dr-box, .cr-box {
     padding: 10px;
-    border-radius: 2px;
+    border-radius: 6px;
     text-align: center;
     font-family: 'DM Mono', monospace;
     font-size: 11px;
   }
+  .dr-box { background: rgba(248, 113, 113, 0.12); color: #fca5a5; border: 1px solid rgba(248, 113, 113, 0.20); }
+  .cr-box { background: rgba(16, 185, 129, 0.12);  color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.20); }
+  .dr-box strong, .cr-box strong { display: block; font-size: 14px; margin-bottom: 4px; }
 
-  .dr-box { background: #fde8e8; color: var(--red); }
-  .cr-box { background: #e8f4ee; color: var(--green); }
-
-  .dr-box strong, .cr-box strong {
-    display: block;
-    font-size: 14px;
-    margin-bottom: 4px;
-  }
-
-  /* ---- DEPRECIATION ---- */
+  /* ── Depreciation result ── */
   .dep-result {
-    background: var(--ink);
-    color: var(--paper);
+    background: rgba(6, 10, 22, 0.85);
+    border: 1px solid rgba(100, 180, 255, 0.14);
+    border-radius: 10px;
+    color: var(--text-primary);
     padding: 24px;
     margin-top: 20px;
     font-family: 'DM Mono', monospace;
   }
-
   .dep-result h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
+    font-family: 'Inter', sans-serif;
+    font-size: 17px; font-weight: 700;
     margin-bottom: 16px;
-    color: var(--gold);
+    color: #93c5fd;
   }
-
   .dep-line {
     display: flex;
     justify-content: space-between;
-    padding: 6px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(100, 180, 255, 0.07);
     font-size: 13px;
+    color: var(--text-secondary);
   }
+  .dep-line .val { color: var(--accent-blue); font-weight: 600; }
 
-  .dep-line .val { color: var(--saffron); font-weight: 600; }
-
-  /* ---- GST ---- */
+  /* ── GST breakdown ── */
   .gst-breakdown {
-    background: #f8f0e3;
-    border: 1px solid var(--rule);
+    background: rgba(8, 12, 24, 0.80);
+    border: 1px solid rgba(100, 180, 255, 0.12);
+    border-radius: 10px;
     padding: 20px;
     margin-top: 16px;
     font-family: 'DM Mono', monospace;
   }
-
   .gst-row {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 12px;
     padding: 8px 0;
-    border-bottom: 1px dashed var(--rule);
+    border-bottom: 1px dashed rgba(100, 180, 255, 0.09);
     font-size: 12px;
+    color: var(--text-primary);
   }
-
   .gst-row.header {
     font-weight: 700;
-    font-size: 11px;
+    font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--gold);
   }
 
+  /* ── Section divider ── */
   .section-divider {
     text-align: center;
     margin: 32px 0;
     position: relative;
   }
-
   .section-divider::before {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
+    top: 50%; left: 0; right: 0;
     height: 1px;
-    background: var(--rule);
+    background: rgba(100, 180, 255, 0.14);
   }
-
   .section-divider span {
-    background: var(--paper);
+    background: var(--bg-deep);
     padding: 0 16px;
     position: relative;
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: var(--gold);
+    color: var(--text-secondary);
   }
 
+  /* ── Alert boxes ── */
   .alert {
     padding: 12px 16px;
     font-family: 'DM Mono', monospace;
     font-size: 12px;
     margin-bottom: 12px;
-    border-left: 4px solid;
+    border-left: 3px solid;
+    border-radius: 0 8px 8px 0;
+    animation: fadeUp 0.28s ease;
   }
+  .alert-error   { border-color: #ef4444; background: rgba(239,  68,  68, 0.10); color: #fca5a5; }
+  .alert-success { border-color: #10b981; background: rgba( 16, 185, 129, 0.10); color: #6ee7b7; }
+  .alert-info    { border-color: var(--accent-blue); background: rgba(59, 130, 246, 0.10); color: #93c5fd; }
 
-  .alert-error { border-color: var(--red); background: #fde8e8; color: var(--red); }
-  .alert-success { border-color: var(--green); background: #e8f4ee; color: var(--green); }
-  .alert-info { border-color: var(--gold); background: #fff8e6; color: var(--gold); }
-
+  /* ── Journal entry list items ── */
   .journal-entries-list { margin-top: 20px; }
 
   .entry-item {
-    background: white;
-    border: 1px solid var(--ledger);
-    border-left: 4px solid var(--saffron);
+    background: rgba(12, 18, 34, 0.75);
+    border: 1px solid rgba(100, 180, 255, 0.10);
+    border-left: 3px solid var(--accent-blue);
+    border-radius: 8px;
     padding: 14px 18px;
     margin-bottom: 10px;
     display: grid;
@@ -508,49 +638,65 @@
     align-items: center;
     font-family: 'DM Mono', monospace;
     font-size: 12px;
+    animation: fadeUp 0.30s ease;
   }
-
   .entry-date { color: var(--gold); }
-  .entry-narration { font-size: 13px; color: var(--ink); grid-column: 1/-1; margin-top: 4px; opacity: 0.7; }
+  .entry-narration {
+    font-size: 12px;
+    color: var(--text-secondary);
+    grid-column: 1/-1;
+    margin-top: 4px;
+    opacity: 0.9;
+    font-style: italic;
+  }
 
+  /* ── Profit / Loss box  (CSS overrides JS-injected light backgrounds) ── */
   .profit-loss-box {
-    padding: 20px;
+    padding: 24px;
     text-align: center;
     font-family: 'DM Mono', monospace;
+    border-radius: 0 0 8px 8px;
   }
-
+  .profit-loss-box.profit {
+    background: rgba(16, 185, 129, 0.12) !important;
+    border-top: 1px solid rgba(16, 185, 129, 0.22) !important;
+  }
+  .profit-loss-box.loss {
+    background: rgba(239, 68, 68, 0.12) !important;
+    border-top: 1px solid rgba(239, 68,  68, 0.22) !important;
+  }
   .profit-loss-box .amount {
-    font-family: 'Playfair Display', serif;
-    font-size: 36px;
-    font-weight: 900;
+    font-family: 'Inter', sans-serif;
+    font-size: 38px; font-weight: 800;
+    letter-spacing: -1px;
+  }
+  .profit { color: #10b981; }
+  .loss   { color: #ef4444; }
+
+  /* ── Info card (reusable, e.g. Modern Approach panel) ── */
+  .info-card {
+    margin-top: 24px;
+    padding: 16px;
+    background: rgba(59, 130, 246, 0.07);
+    border: 1px solid rgba(100, 180, 255, 0.18);
+    border-radius: 8px;
   }
 
-  .profit { color: var(--green); }
-  .loss { color: var(--red); }
-
-  /* NEW: Tap-friendly buttons and inputs — minimum 44px height */
-  .btn { min-height: 44px; }
-  input, select, textarea { min-height: 44px; }
-
-  /* NEW: Tooltip for sample data button */
-  .tooltip-wrap {
-    position: relative;
-    display: inline-block;
-  }
+  /* ── Tooltip ── */
+  .tooltip-wrap { position: relative; display: inline-block; }
   .tooltip-wrap .tooltip-text {
-    visibility: hidden;
-    opacity: 0;
-    background: var(--ink);
-    color: var(--paper);
+    visibility: hidden; opacity: 0;
+    background: rgba(6, 10, 22, 0.95);
+    border: 1px solid rgba(59, 130, 246, 0.22);
+    color: var(--text-primary);
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
+    font-size: 10px;
     text-align: center;
-    border-radius: 2px;
-    padding: 6px 10px;
+    border-radius: 6px;
+    padding: 6px 12px;
     position: absolute;
     z-index: 200;
-    bottom: 110%;
-    left: 50%;
+    bottom: 110%; left: 50%;
     transform: translateX(-50%);
     white-space: nowrap;
     transition: opacity 0.2s;
@@ -558,29 +704,40 @@
   }
   .tooltip-wrap:hover .tooltip-text { visibility: visible; opacity: 1; }
 
-  /* NEW: Mobile responsiveness — screens < 768px */
+  /* ── Mobile responsiveness ── */
   @media (max-width: 768px) {
-    header { padding: 16px 16px; flex-wrap: wrap; gap: 10px; }
-    .container { padding: 20px 12px; }
+    header { padding: 14px 16px; flex-wrap: wrap; gap: 10px; }
+    .container { padding: 18px 12px; }
     .form-grid { grid-template-columns: 1fr !important; }
-    /* Horizontal scroll for tables, no full-page scroll */
+    .tabs { top: var(--header-height-mobile); padding: 4px; gap: 2px; }
+    .tab  { padding: 8px 11px; font-size: 9px; }
     .ledger-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    /* Sticky first column in tables */
+    /* Sticky first column on mobile */
     .ledger-table th:first-child,
     .ledger-table td:first-child {
-      position: sticky;
-      left: 0;
-      z-index: 2;
-      background: var(--paper);
+      position: sticky; left: 0; z-index: 2;
+      background: #090e1c;
     }
-    .ledger-table thead th:first-child { background: var(--ink); }
-    .ledger-table tbody tr:hover td:first-child { background: #fef9f0; }
-    /* Stack P&L and BS grids on mobile */
+    .ledger-table thead th:first-child { background: rgba(20, 40, 90, 0.92); }
     .bs-grid { grid-template-columns: 1fr !important; }
-    .bs-side:first-child { border-right: none; border-bottom: 1.5px solid var(--ink); }
-    /* Button row wrapping */
+    .bs-side:first-child { border-right: none; border-bottom: 1px solid rgba(100, 180, 255, 0.12); }
     .btn-row { flex-wrap: wrap; }
   }
+
+  /* ── Accessibility — disable animations for prefers-reduced-motion ── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0s !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0s !important;
+    }
+  }
+
+  /* ── Global scrollbar ── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg-deep); }
+  ::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.32); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.52); }
 </style>
 </head>
 <body>
@@ -643,7 +800,7 @@
           </div>
         </div>
       </div>
-      <div style="margin-top:24px;padding:16px;background:#fff8e6;border:1px solid var(--rule);">
+      <div class="info-card">
         <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Modern Approach — Debit & Credit Rules</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-family:'DM Mono',monospace;font-size:12px;">
           <div><span style="color:var(--red);font-weight:700;">DR ↑</span> Assets increase</div>
