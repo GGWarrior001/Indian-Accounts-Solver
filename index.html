@@ -1605,18 +1605,24 @@
 
 <script>
   // ═══════════════════════════════════════════════════
+  // STATE — declared first so all functions can access it
+  // ═══════════════════════════════════════════════════
+  let journalEntries = [];
+
+  // ═══════════════════════════════════════════════════
   // THEME SYSTEM
   // ═══════════════════════════════════════════════════
   function toggleTheme() {
     document.documentElement.classList.add('theme-switching');
-    const current = document.documentElement.getAttribute('data-theme');
+    const current = document.documentElement.getAttribute('data-theme') || 'white';
     const next = current === 'white' ? 'black' : 'white';
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('theme-preference', next);
     updateThemeIcon();
+    // Matches the 0.4s CSS transition duration
     setTimeout(function() {
       document.documentElement.classList.remove('theme-switching');
-    }, 500);
+    }, 400);
   }
 
   function initTheme() {
@@ -1626,8 +1632,14 @@
   }
 
   function updateThemeIcon() {
-    const theme = document.documentElement.getAttribute('data-theme');
+    const theme = document.documentElement.getAttribute('data-theme') || 'white';
     document.getElementById('theme-icon').textContent = theme === 'white' ? '🌙' : '☀️';
+  }
+
+  // Helper: respects prefers-reduced-motion for scroll behaviour
+  function scrollTop() {
+    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: prefersReduced ? 'auto' : 'smooth' });
   }
 
   // ═══════════════════════════════════════════════════
@@ -1652,7 +1664,7 @@
     crumb.style.display    = 'inline';
     crumb.textContent      = moduleName;
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollTop();
   }
 
   function goHome() {
@@ -1667,7 +1679,7 @@
     crumb.style.display   = 'none';
 
     updateStatStrip();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollTop();
   }
 
   function updateStatStrip() {
@@ -1683,9 +1695,6 @@
   // ═══════════════════════════════════════════════════
   // EXISTING JS — preserved exactly (zero regression)
   // ═══════════════════════════════════════════════════
-
-  // ---- State ----
-  let journalEntries = [];
 
   // NEW: localStorage persistence — save all journal entries
   function saveToLocalStorage() {
