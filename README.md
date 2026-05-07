@@ -21,6 +21,7 @@
 | 📉 **Depreciation** | SLM & WDV methods with year-wise schedule |
 | 🧾 **GST Calculator** | CGST + SGST / IGST as per GST Act 2017 |
 | 💾 **Data Persistence** | Journal entries auto-saved to `localStorage` across sessions |
+| 🎨 **Theme Toggle** | Switch between White/Gold and Black/Blue UI themes |
 | 📱 **Mobile Responsive** | Optimised layout for phones and tablets |
 
 ---
@@ -37,6 +38,8 @@ open index.html         # macOS
 start index.html        # Windows
 xdg-open index.html     # Linux
 ```
+
+> Journal data is stored in browser `localStorage` using the key `indian_accounts_journal`.
 
 ### Option 2 — GitHub Pages (live demo)
 
@@ -147,10 +150,11 @@ indian-accounts-solver/
 
 ## 🛠️ Tech Stack
 
-- **Pure HTML5, CSS3, Vanilla JavaScript** — zero dependencies, zero build tools
+- **Pure HTML5, CSS3, Vanilla JavaScript** — zero framework dependencies, zero build tools
 - **SheetJS (xlsx-0.20.0)** — Excel export (loaded via CDN)
 - **Google Fonts** — Playfair Display, DM Mono, Noto Sans (loaded via CDN)
-- Works entirely **offline** after first load (except fonts and SheetJS CDN)
+- No build step required — open `index.html` directly in a browser
+- Works **offline** after first successful load (except external CDN fetches for fonts/SheetJS when not cached)
 
 ---
 
