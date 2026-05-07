@@ -2,7 +2,7 @@
 <html lang="en" data-theme="white">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <title data-i18n="meta.title">Indian Accounts Solver</title>
 <meta name="description" content="Indian accounting toolkit with journal, ledger, trial balance, P&amp;L, balance sheet, depreciation, and GST modules.">
 <link rel="canonical" href="https://indian-accounts.vercel.app/">
@@ -165,11 +165,22 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   /* ── Body ── */
+  html {
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
   body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     font-family: 'Inter', 'Noto Sans', sans-serif;
     min-height: 100vh;
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
   }
 
   [data-theme="white"] body {
@@ -445,6 +456,8 @@
     padding: 32px 24px;
     position: relative;
     z-index: 1;
+    min-height: 100vh;
+    box-sizing: border-box;
   }
 
   /* ════════════════════════════════════════════════════
@@ -537,6 +550,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
     gap: 16px;
+    padding-bottom: 20px;
   }
 
   .module-card {
@@ -558,6 +572,8 @@
       transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
       box-shadow 0.22s ease,
       border-color 0.22s ease;
+    min-width: 0;
+    flex-shrink: 0;
   }
 
   /* Gold/blue accent top bar */
@@ -1193,8 +1209,8 @@
     .bs-grid { grid-template-columns: 1fr !important; }
     .bs-side:first-child { border-right: none; border-bottom: 1px solid var(--border-subtle); }
     .btn-row { flex-wrap: wrap; }
-    .home-grid { grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 12px; }
-    .module-card { padding: 20px 16px; }
+    .home-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-bottom: 20px; }
+    .module-card { padding: 18px 14px; min-height: 150px; }
     .module-icon { font-size: 28px; }
     .module-name { font-size: 13px; }
     .card { padding: 20px 16px; }
@@ -1202,6 +1218,10 @@
     .home-title h2 { font-size: 20px; }
     .header-nav { padding: 0 8px; }
     .lang-switcher { min-width: 116px; font-size: 10px; padding-left: 10px; }
+  }
+
+  @media (max-width: 480px) {
+    .home-grid { grid-template-columns: 1fr; }
   }
 
   /* ── Reduced motion ── */
@@ -1257,9 +1277,10 @@
         <li class="lang-switcher-option" role="option" data-lang="bn" data-i18n="language.bn" tabindex="-1" aria-selected="false">বাংলা</li>
       </ul>
     </div>
-    <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle color theme">
+    <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" data-i18n-title="theme.toggle" data-i18n-aria-label="theme.toggle" title="Toggle theme" aria-label="Toggle color theme">
       <span id="theme-icon">🌙</span>
     </button>
+    <span id="lang-change-announcement" class="sr-only" aria-live="polite" aria-atomic="true"></span>
   </div>
 </header>
 
@@ -1291,60 +1312,60 @@
     <!-- 8 module cards -->
     <div class="home-grid">
 
-      <div class="module-card" onclick="showModule('rules', '📖 Golden Rules')">
+      <div class="module-card" onclick="showModule('rules', 'modules.rules.title')" data-i18n-aria-label="modules.rules.aria">
         <div class="module-icon">📖</div>
-        <div class="module-name">Golden Rules</div>
-        <div class="module-name-hi">सुनहरे नियम</div>
-        <div class="module-desc">Real, Personal &amp; Nominal Accounts</div>
+        <div class="module-name" data-i18n="modules.rules.title">Golden Rules</div>
+        <div class="module-name-hi" data-i18n="modules.rules.subtitle">सुनहरे नियम</div>
+        <div class="module-desc" data-i18n="modules.rules.desc">Real, Personal &amp; Nominal Accounts</div>
       </div>
 
-      <div class="module-card" onclick="showModule('journal', '📔 Journal Entry')">
+      <div class="module-card" onclick="showModule('journal', 'modules.journal.title')" data-i18n-aria-label="modules.journal.aria">
         <div class="module-icon">📔</div>
-        <div class="module-name">Journal Entry</div>
-        <div class="module-name-hi">रोजनामचा</div>
-        <div class="module-desc">Record every business transaction</div>
+        <div class="module-name" data-i18n="modules.journal.title">Journal Entry</div>
+        <div class="module-name-hi" data-i18n="modules.journal.subtitle">रोजनामचा</div>
+        <div class="module-desc" data-i18n="modules.journal.desc">Record every business transaction</div>
       </div>
 
-      <div class="module-card" onclick="showModule('ledger', '📒 Ledger')">
+      <div class="module-card" onclick="showModule('ledger', 'modules.ledger.title')" data-i18n-aria-label="modules.ledger.aria">
         <div class="module-icon">📒</div>
-        <div class="module-name">Ledger</div>
-        <div class="module-name-hi">खाता बही</div>
-        <div class="module-desc">T-Account from Journal entries</div>
+        <div class="module-name" data-i18n="modules.ledger.title">Ledger</div>
+        <div class="module-name-hi" data-i18n="modules.ledger.subtitle">खाता बही</div>
+        <div class="module-desc" data-i18n="modules.ledger.desc">T-Account from Journal entries</div>
       </div>
 
-      <div class="module-card" onclick="showModule('trial', '⚖️ Trial Balance')">
+      <div class="module-card" onclick="showModule('trial', 'modules.trial.title')" data-i18n-aria-label="modules.trial.aria">
         <div class="module-icon">⚖️</div>
-        <div class="module-name">Trial Balance</div>
-        <div class="module-name-hi">तलपट</div>
-        <div class="module-desc">Auto-generated from Journal entries</div>
+        <div class="module-name" data-i18n="modules.trial.title">Trial Balance</div>
+        <div class="module-name-hi" data-i18n="modules.trial.subtitle">तलपट</div>
+        <div class="module-desc" data-i18n="modules.trial.desc">Auto-generated from Journal entries</div>
       </div>
 
-      <div class="module-card" onclick="showModule('pl', '📊 P&amp;L Account')">
+      <div class="module-card" onclick="showModule('pl', 'modules.pl.title')" data-i18n-aria-label="modules.pl.aria">
         <div class="module-icon">📊</div>
-        <div class="module-name">P&amp;L Account</div>
-        <div class="module-name-hi">लाभ-हानि खाता</div>
-        <div class="module-desc">Trading &amp; Profit &amp; Loss Account</div>
+        <div class="module-name" data-i18n="modules.pl.title">P&amp;L Account</div>
+        <div class="module-name-hi" data-i18n="modules.pl.subtitle">लाभ-हानि खाता</div>
+        <div class="module-desc" data-i18n="modules.pl.desc">Trading &amp; Profit &amp; Loss Account</div>
       </div>
 
-      <div class="module-card" onclick="showModule('balance', '🏛️ Balance Sheet')">
+      <div class="module-card" onclick="showModule('balance', 'modules.balance.title')" data-i18n-aria-label="modules.balance.aria">
         <div class="module-icon">🏛️</div>
-        <div class="module-name">Balance Sheet</div>
-        <div class="module-name-hi">चिट्ठा</div>
-        <div class="module-desc">As per Schedule III, Companies Act 2013</div>
+        <div class="module-name" data-i18n="modules.balance.title">Balance Sheet</div>
+        <div class="module-name-hi" data-i18n="modules.balance.subtitle">चिट्ठा</div>
+        <div class="module-desc" data-i18n="modules.balance.desc">As per Schedule III, Companies Act 2013</div>
       </div>
 
-      <div class="module-card" onclick="showModule('depreciation', '📉 Depreciation')">
+      <div class="module-card" onclick="showModule('depreciation', 'modules.depreciation.title')" data-i18n-aria-label="modules.depreciation.aria">
         <div class="module-icon">📉</div>
-        <div class="module-name">Depreciation</div>
-        <div class="module-name-hi">मूल्यह्रास</div>
-        <div class="module-desc">SLM &amp; WDV methods calculator</div>
+        <div class="module-name" data-i18n="modules.depreciation.title">Depreciation</div>
+        <div class="module-name-hi" data-i18n="modules.depreciation.subtitle">मूल्यह्रास</div>
+        <div class="module-desc" data-i18n="modules.depreciation.desc">SLM &amp; WDV methods calculator</div>
       </div>
 
-      <div class="module-card" onclick="showModule('gst', '🧾 GST Calculator')">
+      <div class="module-card" onclick="showModule('gst', 'modules.gst.title')" data-i18n-aria-label="modules.gst.aria">
         <div class="module-icon">🧾</div>
-        <div class="module-name">GST Calculator</div>
-        <div class="module-name-hi">माल एवं सेवा कर</div>
-        <div class="module-desc">CGST + SGST / IGST as per GST Act 2017</div>
+        <div class="module-name" data-i18n="modules.gst.title">GST Calculator</div>
+        <div class="module-name-hi" data-i18n="modules.gst.subtitle">माल एवं सेवा कर</div>
+        <div class="module-desc" data-i18n="modules.gst.desc">CGST + SGST / IGST as per GST Act 2017</div>
       </div>
 
     </div>
@@ -1359,14 +1380,14 @@
 
   <!-- TABS BAR — hidden visually, kept for JS compatibility -->
   <div class="tabs">
-    <button class="tab active" onclick="showTab('rules', this)">📖 Rules</button>
-    <button class="tab" onclick="showTab('journal', this)">📔 Journal Entry</button>
-    <button class="tab" onclick="showTab('ledger', this)">📒 Ledger</button>
-    <button class="tab" onclick="showTab('trial', this)">⚖️ Trial Balance</button>
-    <button class="tab" onclick="showTab('pl', this)">📊 P&L Account</button>
-    <button class="tab" onclick="showTab('balance', this)">🏛️ Balance Sheet</button>
-    <button class="tab" onclick="showTab('depreciation', this)">📉 Depreciation</button>
-    <button class="tab" onclick="showTab('gst', this)">🧾 GST Calculator</button>
+    <button class="tab active" onclick="showTab('rules', this)" data-i18n="tabs.rules">📖 Rules</button>
+    <button class="tab" onclick="showTab('journal', this)" data-i18n="tabs.journal">📔 Journal Entry</button>
+    <button class="tab" onclick="showTab('ledger', this)" data-i18n="tabs.ledger">📒 Ledger</button>
+    <button class="tab" onclick="showTab('trial', this)" data-i18n="tabs.trial">⚖️ Trial Balance</button>
+    <button class="tab" onclick="showTab('pl', this)" data-i18n="tabs.pl">📊 P&L Account</button>
+    <button class="tab" onclick="showTab('balance', this)" data-i18n="tabs.balance">🏛️ Balance Sheet</button>
+    <button class="tab" onclick="showTab('depreciation', this)" data-i18n="tabs.depreciation">📉 Depreciation</button>
+    <button class="tab" onclick="showTab('gst', this)" data-i18n="tabs.gst">🧾 GST Calculator</button>
   </div>
 
   <!-- RULES PANEL -->
