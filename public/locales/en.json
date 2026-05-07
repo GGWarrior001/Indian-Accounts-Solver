@@ -5,6 +5,7 @@
   "header.backHome": "← Home",
   "header.badge": "Double Entry System",
   "language.label": "Language",
+  "language.ariaLabel": "Select language",
   "language.en": "English",
   "language.hi": "हिन्दी",
   "language.kn": "ಕನ್ನಡ",

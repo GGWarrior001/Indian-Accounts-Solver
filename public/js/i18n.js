@@ -28,7 +28,7 @@
     }
 
     try {
-      const response = await fetch(LOCALES_BASE + '/' + lang + '.json', { cache: 'force-cache' });
+      const response = await fetch(LOCALES_BASE + '/' + lang + '.json', { cache: 'default' });
       if (!response.ok) throw new Error('Failed locale request');
       const data = await response.json();
       const parsed = (data && typeof data === 'object') ? data : {};
@@ -46,6 +46,12 @@
     nodes.forEach(function(node) {
       const key = node.getAttribute('data-i18n');
       node.textContent = t(key);
+    });
+
+    const ariaNodes = document.querySelectorAll('[data-i18n-aria-label]');
+    ariaNodes.forEach(function(node) {
+      const key = node.getAttribute('data-i18n-aria-label');
+      node.setAttribute('aria-label', t(key));
     });
   }
 
@@ -90,9 +96,6 @@
   function attachLanguageSwitcher() {
     const switcher = document.getElementById('lang-switcher');
     if (!switcher) return;
-
-    switcher.setAttribute('aria-label', switcher.getAttribute('aria-label') || 'Select language');
-    switcher.setAttribute('role', 'listbox');
 
     switcher.addEventListener('change', function(event) {
       setLanguage(event.target.value);
