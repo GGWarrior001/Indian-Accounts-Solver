@@ -165,7 +165,7 @@
           setExpanded(false);
           switcherButton.focus();
         }
-      } else if (event.key === 'Escape' || event.key === 'Tab') {
+      } else if (event.key === 'Escape') {
         setExpanded(false);
         switcherButton.focus();
       }
