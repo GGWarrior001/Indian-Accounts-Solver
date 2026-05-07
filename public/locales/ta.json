@@ -1,0 +1,19 @@
+{
+  "meta.title": "இந்திய கணக்கியல் தீர்வாளர் — இந்திய கணக்குகள்",
+  "app.title": "இந்திய கணக்கியல் தீர்வாளர்",
+  "app.subtitle": "இந்திய கணக்கியல் அமைப்பு — நிறுவனச் சட்டம் மற்றும் GAAP படி",
+  "header.backHome": "← முகப்பு",
+  "header.badge": "இரட்டை பதிவு முறை",
+  "language.label": "மொழி",
+  "language.ariaLabel": "மொழியைத் தேர்ந்தெடுக்கவும்",
+  "language.en": "English",
+  "language.hi": "हिन्दी",
+  "language.kn": "ಕನ್ನಡ",
+  "language.ta": "தமிழ்",
+  "language.te": "తెలుగు",
+  "language.bn": "বাংলা",
+  "stats.journalEntries": "ஜர்னல் பதிவுகள்",
+  "stats.lastUpdated": "கடைசி புதுப்பிப்பு",
+  "home.selectModule": "ஒரு தொகுதியைத் தேர்வுசெய்க",
+  "home.selectModuleSub": "தொடங்க எந்த கார்டையும் சொடுக்கவும்"
+}

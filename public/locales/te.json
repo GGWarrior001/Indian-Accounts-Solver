@@ -1,0 +1,19 @@
+{
+  "meta.title": "ఇండియన్ అకౌంట్స్ సాల్వర్ — భారతీయ ఖాతాలు",
+  "app.title": "ఇండియన్ అకౌంట్స్ సాల్వర్",
+  "app.subtitle": "భారతీయ అకౌంటింగ్ వ్యవస్థ — కంపెనీస్ చట్టం మరియు GAAP ప్రకారం",
+  "header.backHome": "← హోమ్",
+  "header.badge": "డబుల్ ఎంట్రీ సిస్టమ్",
+  "language.label": "భాష",
+  "language.ariaLabel": "భాషను ఎంచుకోండి",
+  "language.en": "English",
+  "language.hi": "हिन्दी",
+  "language.kn": "ಕನ್ನಡ",
+  "language.ta": "தமிழ்",
+  "language.te": "తెలుగు",
+  "language.bn": "বাংলা",
+  "stats.journalEntries": "జర్నల్ ఎంట్రీలు",
+  "stats.lastUpdated": "చివరి నవీకరణ",
+  "home.selectModule": "ఒక మాడ్యూల్ ఎంచుకోండి",
+  "home.selectModuleSub": "ప్రారంభించడానికి ఏ కార్డ్‌నైనా క్లిక్ చేయండి"
+}
