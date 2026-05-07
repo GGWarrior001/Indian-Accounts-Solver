@@ -28,7 +28,7 @@
     }
 
     try {
-      const response = await fetch(LOCALES_BASE + '/' + lang + '.json', { cache: 'default' });
+      const response = await fetch(`${LOCALES_BASE}/${lang}.json`, { cache: 'default' });
       if (!response.ok) throw new Error('Failed locale request');
       const data = await response.json();
       const parsed = (data && typeof data === 'object') ? data : {};
@@ -76,7 +76,7 @@
     const target = normalized === DEFAULT_LANG ? enMessages : await fetchLocale(normalized);
 
     currentLang = normalized;
-    activeMessages = Object.assign({}, enMessages, target);
+    activeMessages = { ...enMessages, ...target };
     document.documentElement.setAttribute('lang', currentLang);
     applyTranslations();
     syncLanguageSwitcher();
