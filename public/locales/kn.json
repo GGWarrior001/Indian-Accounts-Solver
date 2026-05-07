@@ -1,0 +1,18 @@
+{
+  "meta.title": "ಇಂಡಿಯನ್ ಅಕೌಂಟ್ಸ್ ಸೊಲ್ವರ್ — ಭಾರತೀಯ ಲೆಕ್ಕಪತ್ರ",
+  "app.title": "ಇಂಡಿಯನ್ ಅಕೌಂಟ್ಸ್ ಸೊಲ್ವರ್",
+  "app.subtitle": "ಭಾರತೀಯ ಲೆಕ್ಕಪತ್ರ ವ್ಯವಸ್ಥೆ — ಕಂಪನೀಸ್ ಕಾಯ್ದೆ ಮತ್ತು GAAP ಪ್ರಕಾರ",
+  "header.backHome": "← ಮುಖಪುಟ",
+  "header.badge": "ಡಬಲ್ ಎಂಟ್ರಿ ಸಿಸ್ಟಮ್",
+  "language.label": "ಭಾಷೆ",
+  "language.en": "English",
+  "language.hi": "हिन्दी",
+  "language.kn": "ಕನ್ನಡ",
+  "language.ta": "தமிழ்",
+  "language.te": "తెలుగు",
+  "language.bn": "বাংলা",
+  "stats.journalEntries": "ಜರ್ನಲ್ ಎಂಟ್ರಿಗಳು",
+  "stats.lastUpdated": "ಕೊನೆಯ ನವೀಕರಣ",
+  "home.selectModule": "ಒಂದು ಮಾಡ್ಯೂಲ್ ಆಯ್ಕೆಮಾಡಿ",
+  "home.selectModuleSub": "ಪ್ರಾರಂಭಿಸಲು ಯಾವುದೇ ಕಾರ್ಡ್ ಕ್ಲಿಕ್ ಮಾಡಿ"
+}

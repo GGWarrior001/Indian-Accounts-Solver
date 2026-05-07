@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Indian Accounts Solver — भारतीय लेखा</title>
+<title data-i18n="meta.title">Indian Accounts Solver — भारतीय लेखा</title>
 <meta name="description" content="Indian accounting toolkit with journal, ledger, trial balance, P&amp;L, balance sheet, depreciation, and GST modules.">
 <link rel="canonical" href="https://indian-accounts.vercel.app/">
 <meta property="og:type" content="website">
@@ -14,7 +14,7 @@
 <meta name="twitter:title" content="Indian Accounts Solver — भारतीय लेखा">
 <meta name="twitter:description" content="Indian accounting toolkit with journal, ledger, trial balance, P&amp;L, balance sheet, depreciation, and GST modules.">
 <meta name="twitter:url" content="https://indian-accounts.vercel.app/">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Noto+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Noto+Sans:wght@300;400;600&family=Noto+Sans+Bengali:wght@300;400;600&family=Noto+Sans+Devanagari:wght@300;400;600&family=Noto+Sans+Kannada:wght@300;400;600&family=Noto+Sans+Tamil:wght@300;400;600&family=Noto+Sans+Telugu:wght@300;400;600&display=swap" rel="stylesheet">
 <!-- SheetJS CDN for Excel export -->
 <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
 <style>
@@ -352,6 +352,61 @@
   }
 
   .theme-toggle:active { transform: scale(0.94); }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  .lang-switcher-wrap {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .lang-switcher {
+    height: 40px;
+    min-width: 140px;
+    padding: 0 36px 0 12px;
+    background: var(--accent-soft);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    color: var(--text-primary);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--accent-primary) 50%),
+      linear-gradient(135deg, var(--accent-primary) 50%, transparent 50%);
+    background-position:
+      calc(100% - 18px) calc(50% - 2px),
+      calc(100% - 13px) calc(50% - 2px);
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    transition: background 0.22s, border-color 0.22s, transform 0.22s, box-shadow 0.22s;
+  }
+
+  .lang-switcher:hover {
+    background: var(--accent-glow);
+    border-color: var(--accent-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 0 16px var(--accent-glow);
+  }
+
+  .lang-switcher:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+  }
 
   /* ── Container ── */
   .container {
@@ -1116,6 +1171,7 @@
     .stat-item { padding: 14px 18px; }
     .home-title h2 { font-size: 20px; }
     .header-nav { padding: 0 8px; }
+    .lang-switcher { min-width: 116px; font-size: 10px; padding-left: 10px; }
   }
 
   /* ── Reduced motion ── */
@@ -1139,23 +1195,35 @@
 <!-- ═══════════════════════════════════════
      HEADER
      ═══════════════════════════════════════ -->
+<!-- i18n: add data-i18n="..." to translate -->
 <header>
   <div class="logo">
     <div class="logo-icon">₹</div>
     <div class="logo-text">
-      <h1>Indian Accounts Solver</h1>
-      <p>भारतीय लेखांकन प्रणाली — As per Companies Act &amp; GAAP</p>
+      <h1 data-i18n="app.title">Indian Accounts Solver</h1>
+      <p data-i18n="app.subtitle">भारतीय लेखांकन प्रणाली — As per Companies Act &amp; GAAP</p>
     </div>
   </div>
 
   <div class="header-nav">
-    <button class="btn-back" id="back-btn" onclick="goHome()">← Home</button>
+    <button class="btn-back" id="back-btn" onclick="goHome()" data-i18n="header.backHome">← Home</button>
     <span class="breadcrumb-sep" id="breadcrumb-sep">/</span>
     <span class="breadcrumb-module" id="breadcrumb-text"></span>
   </div>
 
   <div class="header-right">
-    <span class="header-badge">Double Entry System</span>
+    <span class="header-badge" data-i18n="header.badge">Double Entry System</span>
+    <div class="lang-switcher-wrap">
+      <label for="lang-switcher" class="sr-only" data-i18n="language.label">Language</label>
+      <select id="lang-switcher" class="lang-switcher" aria-label="Select language" role="listbox">
+        <option value="en" data-i18n="language.en">English</option>
+        <option value="hi" data-i18n="language.hi">हिन्दी</option>
+        <option value="kn" data-i18n="language.kn">ಕನ್ನಡ</option>
+        <option value="ta" data-i18n="language.ta">தமிழ்</option>
+        <option value="te" data-i18n="language.te">తెలుగు</option>
+        <option value="bn" data-i18n="language.bn">বাংলা</option>
+      </select>
+    </div>
     <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle color theme">
       <span id="theme-icon">🌙</span>
     </button>
@@ -1169,21 +1237,22 @@
   <div class="container">
 
     <!-- Quick stat strip -->
+    <!-- i18n: add data-i18n="..." to translate -->
     <div class="stat-strip">
       <div class="stat-item">
         <span class="stat-value" id="stat-entries">0</span>
-        <span class="stat-label">Journal Entries</span>
+        <span class="stat-label" data-i18n="stats.journalEntries">Journal Entries</span>
       </div>
       <div class="stat-item">
         <span class="stat-value" id="stat-updated">—</span>
-        <span class="stat-label">Last Updated</span>
+        <span class="stat-label" data-i18n="stats.lastUpdated">Last Updated</span>
       </div>
     </div>
 
     <!-- Title -->
     <div class="home-title">
-      <h2>Select a Module</h2>
-      <p>मॉड्यूल चुनें — Click any card to get started</p>
+      <h2 data-i18n="home.selectModule">Select a Module</h2>
+      <p data-i18n="home.selectModuleSub">मॉड्यूल चुनें — Click any card to get started</p>
     </div>
 
     <!-- 8 module cards -->
@@ -1613,6 +1682,7 @@
 </div><!-- .container -->
 </div><!-- #app-container -->
 
+<script src="/js/i18n.js"></script>
 <script>
   // ═══════════════════════════════════════════════════
   // STATE — declared first so all functions can access it
@@ -2277,6 +2347,9 @@
   document.getElementById('j-date').value = new Date().toISOString().split('T')[0];
   loadFromLocalStorage();
   initTheme();
+  if (window.i18n) {
+    i18n.init();
+  }
   updateStatStrip();
 </script>
 </body>

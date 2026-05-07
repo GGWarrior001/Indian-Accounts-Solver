@@ -1,0 +1,18 @@
+{
+  "meta.title": "Indian Accounts Solver — भारतीय लेखा",
+  "app.title": "Indian Accounts Solver",
+  "app.subtitle": "भारतीय लेखांकन प्रणाली — As per Companies Act & GAAP",
+  "header.backHome": "← Home",
+  "header.badge": "Double Entry System",
+  "language.label": "Language",
+  "language.en": "English",
+  "language.hi": "हिन्दी",
+  "language.kn": "ಕನ್ನಡ",
+  "language.ta": "தமிழ்",
+  "language.te": "తెలుగు",
+  "language.bn": "বাংলা",
+  "stats.journalEntries": "Journal Entries",
+  "stats.lastUpdated": "Last Updated",
+  "home.selectModule": "Select a Module",
+  "home.selectModuleSub": "मॉड्यूल चुनें — Click any card to get started"
+}

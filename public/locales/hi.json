@@ -1,0 +1,18 @@
+{
+  "meta.title": "इंडियन अकाउंट्स सॉल्वर — भारतीय लेखा",
+  "app.title": "इंडियन अकाउंट्स सॉल्वर",
+  "app.subtitle": "भारतीय लेखांकन प्रणाली — कंपनी अधिनियम और GAAP के अनुसार",
+  "header.backHome": "← होम",
+  "header.badge": "डबल एंट्री सिस्टम",
+  "language.label": "भाषा",
+  "language.en": "English",
+  "language.hi": "हिन्दी",
+  "language.kn": "ಕನ್ನಡ",
+  "language.ta": "தமிழ்",
+  "language.te": "తెలుగు",
+  "language.bn": "বাংলা",
+  "stats.journalEntries": "जर्नल एंट्रीज़",
+  "stats.lastUpdated": "अंतिम अपडेट",
+  "home.selectModule": "मॉड्यूल चुनें",
+  "home.selectModuleSub": "शुरू करने के लिए कोई भी कार्ड चुनें"
+}

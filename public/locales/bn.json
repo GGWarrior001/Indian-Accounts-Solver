@@ -1,0 +1,18 @@
+{
+  "meta.title": "ইন্ডিয়ান অ্যাকাউন্টস সলভার — ভারতীয় হিসাব",
+  "app.title": "ইন্ডিয়ান অ্যাকাউন্টস সলভার",
+  "app.subtitle": "ভারতীয় হিসাব ব্যবস্থা — কোম্পানি আইন ও GAAP অনুযায়ী",
+  "header.backHome": "← হোম",
+  "header.badge": "ডাবল এন্ট্রি সিস্টেম",
+  "language.label": "ভাষা",
+  "language.en": "English",
+  "language.hi": "हिन्दी",
+  "language.kn": "ಕನ್ನಡ",
+  "language.ta": "தமிழ்",
+  "language.te": "తెలుగు",
+  "language.bn": "বাংলা",
+  "stats.journalEntries": "জার্নাল এন্ট্রি",
+  "stats.lastUpdated": "সর্বশেষ আপডেট",
+  "home.selectModule": "একটি মডিউল নির্বাচন করুন",
+  "home.selectModuleSub": "শুরু করতে যেকোনো কার্ডে ক্লিক করুন"
+}
