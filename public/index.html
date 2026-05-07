@@ -4,7 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Indian Accounts Solver — भारतीय लेखा</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Noto+Sans:wght@300;400;600&displa[...] <!-- SheetJS CDN for Excel export -->
+<meta name="description" content="Indian accounting toolkit with journal, ledger, trial balance, P&amp;L, balance sheet, depreciation, and GST modules.">
+<link rel="canonical" href="https://indian-accounts.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Indian Accounts Solver — भारतीय लेखा">
+<meta property="og:description" content="Indian accounting toolkit with journal, ledger, trial balance, P&amp;L, balance sheet, depreciation, and GST modules.">
+<meta property="og:url" content="https://indian-accounts.vercel.app/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Indian Accounts Solver — भारतीय लेखा">
+<meta name="twitter:description" content="Indian accounting toolkit with journal, ledger, trial balance, P&amp;L, balance sheet, depreciation, and GST modules.">
+<meta name="twitter:url" content="https://indian-accounts.vercel.app/">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Noto+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<!-- SheetJS CDN for Excel export -->
 <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
 <style>
   /* ===========================================================
@@ -222,4 +233,2051 @@
     box-shadow: var(--shadow-soft);
     min-height: var(--header-height);
   }
-  [...]
+
+  .logo { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+
+  .logo-icon {
+    width: 42px; height: 42px;
+    background: var(--gradient-accent);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 0 20px var(--accent-glow), 0 0 6px var(--accent-soft);
+    flex-shrink: 0;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .logo-text h1 {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px; font-weight: 700;
+    letter-spacing: -0.4px;
+    color: var(--text-primary);
+  }
+
+  .logo-text p {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--text-secondary);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* ── Header centre nav (back + breadcrumb) ── */
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    padding: 0 16px;
+  }
+
+  .btn-back {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: var(--accent-soft);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--accent-primary);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    white-space: nowrap;
+    min-height: 36px;
+  }
+
+  .btn-back:hover {
+    background: var(--accent-glow);
+    border-color: var(--accent-primary);
+    transform: translateX(-2px);
+  }
+
+  .breadcrumb-sep {
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    display: none;
+  }
+
+  .breadcrumb-module {
+    color: var(--text-secondary);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    display: none;
+  }
+
+  /* ── Header right ── */
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .header-badge {
+    background: var(--accent-soft);
+    border: 1px solid var(--border-color);
+    color: var(--text-accent);
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .theme-toggle {
+    width: 40px; height: 40px;
+    background: var(--accent-soft);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background 0.22s, border-color 0.22s, transform 0.22s, box-shadow 0.22s;
+    flex-shrink: 0;
+  }
+
+  .theme-toggle:hover {
+    background: var(--accent-glow);
+    border-color: var(--accent-primary);
+    transform: scale(1.12) rotate(18deg);
+    box-shadow: 0 0 16px var(--accent-glow);
+  }
+
+  .theme-toggle:active { transform: scale(0.94); }
+
+  /* ── Container ── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ════════════════════════════════════════════════════
+     HOME SCREEN
+     ════════════════════════════════════════════════════ */
+  #home-screen {
+    display: block;
+    animation: fadeUp 0.42s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  #home-screen.hidden { display: none; }
+
+  /* Stat strip */
+  .stat-strip {
+    display: flex;
+    gap: 0;
+    margin-bottom: 32px;
+    background: var(--bg-card);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    animation: fadeUp 0.42s 0.05s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 18px 28px;
+    border-right: 1px solid var(--border-subtle);
+    position: relative;
+  }
+
+  .stat-item:last-child { border-right: none; }
+
+  /* Gold accent bar on top of stat strip */
+  .stat-strip::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gradient-bar);
+  }
+
+  .stat-strip { position: relative; }
+
+  .stat-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent-primary);
+    letter-spacing: -0.5px;
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  /* Home title */
+  .home-title {
+    margin-bottom: 24px;
+    animation: fadeUp 0.42s 0.10s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  .home-title h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+
+  .home-title p {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+  }
+
+  /* Module cards grid */
+  .home-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+    gap: 16px;
+  }
+
+  .module-card {
+    background: var(--bg-module-card);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 28px 22px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    box-shadow: var(--shadow-card);
+    position: relative;
+    overflow: hidden;
+    transition:
+      transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.22s ease,
+      border-color 0.22s ease;
+  }
+
+  /* Gold/blue accent top bar */
+  .module-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--gradient-bar);
+    opacity: 0;
+    transition: opacity 0.22s ease;
+  }
+
+  /* Inner glow on hover */
+  .module-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, var(--accent-glow) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .module-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--accent-primary);
+  }
+
+  .module-card:hover::before { opacity: 1; }
+  .module-card:hover::after  { opacity: 1; }
+  .module-card:active        { transform: scale(0.98); }
+
+  .module-icon {
+    font-size: 36px;
+    margin-bottom: 6px;
+    position: relative;
+    z-index: 1;
+    line-height: 1;
+  }
+
+  .module-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    position: relative;
+    z-index: 1;
+  }
+
+  .module-name-hi {
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 12px;
+    color: var(--accent-primary);
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+  }
+
+  .module-desc {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-secondary);
+    letter-spacing: 0.2px;
+    line-height: 1.5;
+    margin-top: 3px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Staggered entrance */
+  .module-card:nth-child(1) { animation: fadeUp 0.42s 0.05s cubic-bezier(0.4,0,0.2,1) both; }
+  .module-card:nth-child(2) { animation: fadeUp 0.42s 0.10s cubic-bezier(0.4,0,0.2,1) both; }
+  .module-card:nth-child(3) { animation: fadeUp 0.42s 0.15s cubic-bezier(0.4,0,0.2,1) both; }
+  .module-card:nth-child(4) { animation: fadeUp 0.42s 0.20s cubic-bezier(0.4,0,0.2,1) both; }
+  .module-card:nth-child(5) { animation: fadeUp 0.42s 0.25s cubic-bezier(0.4,0,0.2,1) both; }
+  .module-card:nth-child(6) { animation: fadeUp 0.42s 0.30s cubic-bezier(0.4,0,0.2,1) both; }
+  .module-card:nth-child(7) { animation: fadeUp 0.42s 0.35s cubic-bezier(0.4,0,0.2,1) both; }
+  .module-card:nth-child(8) { animation: fadeUp 0.42s 0.40s cubic-bezier(0.4,0,0.2,1) both; }
+
+  /* ════════════════════════════════════════════════════
+     APP CONTAINER  (modules; hidden until selected)
+     ════════════════════════════════════════════════════ */
+  #app-container { display: none; }
+
+  #app-container.visible {
+    display: block;
+    animation: fadeUp 0.38s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  /* ── Tabs bar (hidden — kept only for JS compatibility) ── */
+  .tabs { display: none !important; }
+
+  /* ── Panels ── */
+  .panel { display: none; }
+
+  .panel.active {
+    display: block;
+    animation: fadeUp 0.38s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  /* ── Card / glassmorphism ── */
+  .card {
+    background: var(--bg-card);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-card);
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.40s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  /* Gradient accent line at top */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gradient-bar);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+  }
+
+  .card:nth-child(1) { animation-delay: 0s;    }
+  .card:nth-child(2) { animation-delay: 0.06s; }
+  .card:nth-child(3) { animation-delay: 0.12s; }
+
+  .card h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px; font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+  }
+
+  .card .subtitle {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-secondary);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  /* ── Form grid ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+
+  /* ── Labels ── */
+  label {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+
+  /* ── Inputs, selects, textareas ── */
+  input, select, textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-input);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text-primary);
+    outline: none;
+    border-radius: var(--radius-sm);
+    transition: border-color 0.22s, box-shadow 0.22s, background 0.22s;
+    min-height: 44px;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px var(--accent-glow), 0 0 20px var(--accent-soft);
+  }
+
+  input::placeholder { color: var(--text-muted); opacity: 0.7; }
+
+  [data-theme="black"] select option { background: #0d1420; color: var(--text-primary); }
+  [data-theme="white"] select option { background: #fff;    color: var(--text-primary); }
+
+  /* ── Buttons ── */
+  .btn {
+    padding: 12px 26px;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s ease;
+    border-radius: var(--radius-sm);
+    min-height: 44px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Shine sweep on hover */
+  .btn::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+    transition: left 0.40s ease;
+  }
+  .btn:hover::after { left: 140%; }
+  .btn:hover        { transform: translateY(-1px); }
+  .btn:active       { transform: scale(0.97); }
+
+  .btn-primary {
+    background: var(--gradient-accent);
+    color: #fff;
+    box-shadow: var(--shadow-btn);
+  }
+  .btn-primary:hover { box-shadow: 0 8px 32px var(--accent-glow); }
+
+  .btn-secondary {
+    background: var(--accent-soft);
+    color: var(--text-accent);
+    border: 1px solid var(--border-color);
+  }
+  .btn-secondary:hover {
+    background: var(--accent-glow);
+    border-color: var(--border-strong);
+  }
+
+  .btn-danger {
+    background: rgba(239, 68, 68, 0.10);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    font-size: 11px;
+    padding: 8px 16px;
+  }
+  .btn-danger:hover {
+    background: rgba(239, 68, 68, 0.20);
+    border-color: rgba(239, 68, 68, 0.45);
+  }
+
+  /* ── Ledger table ── */
+  .ledger-wrap {
+    overflow-x: auto;
+    margin-bottom: 24px;
+    border-radius: 10px;
+    border: 1px solid var(--border-subtle);
+  }
+
+  .ledger-wrap::-webkit-scrollbar { height: 4px; }
+  .ledger-wrap::-webkit-scrollbar-track { background: transparent; }
+  .ledger-wrap::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 2px; }
+
+  .ledger-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+  }
+
+  .ledger-table thead tr { background: var(--bg-table-hd); }
+
+  .ledger-table th {
+    padding: 13px 16px;
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--th-color);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .ledger-table th.num, .ledger-table td.num { text-align: right; }
+
+  .ledger-table tbody tr {
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background 0.15s;
+  }
+  .ledger-table tbody tr:hover { background: var(--accent-soft); }
+
+  .ledger-table td {
+    padding: 12px 16px;
+    vertical-align: middle;
+    color: var(--text-primary);
+  }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .badge-dr { background: var(--badge-dr-bg); color: var(--badge-dr-color); border: 1px solid var(--badge-dr-bg); }
+  .badge-cr { background: var(--badge-cr-bg); color: var(--badge-cr-color); border: 1px solid var(--badge-cr-bg); }
+  .amount-dr { color: var(--amount-dr); font-weight: 600; }
+  .amount-cr { color: var(--amount-cr); font-weight: 600; }
+
+  /* ── Totals row ── */
+  .totals-row td {
+    font-weight: 700 !important;
+    border-top: 1px solid var(--border-strong) !important;
+    font-size: 13px !important;
+    background: var(--accent-soft) !important;
+    color: var(--text-primary) !important;
+  }
+
+  /* ── Balance-sheet grid ── */
+  .bs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  @media (max-width: 700px) { .bs-grid { grid-template-columns: 1fr; } }
+
+  .bs-side {
+    padding: 24px;
+    background: var(--bg-card);
+  }
+  .bs-side:first-child { border-right: 1px solid var(--border-subtle); }
+
+  .bs-side h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 700;
+    color: var(--text-accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .bs-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border-subtle);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+  }
+  .bs-item .label { color: var(--text-secondary); }
+  .bs-item .value { font-weight: 600; color: var(--text-primary); }
+
+  .bs-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 14px; font-weight: 700;
+    border-top: 1px solid var(--border-color);
+    margin-top: 8px;
+    color: var(--text-accent);
+  }
+
+  /* ── Golden rules grid ── */
+  .rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .rule-card {
+    background: var(--bg-module-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color 0.22s, transform 0.22s, box-shadow 0.22s;
+    animation: fadeUp 0.40s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  .rule-card:nth-child(1) { animation-delay: 0s;    }
+  .rule-card:nth-child(2) { animation-delay: 0.07s; }
+  .rule-card:nth-child(3) { animation-delay: 0.14s; }
+
+  .rule-card:hover {
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .rule-card .rule-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px; font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--text-primary);
+  }
+
+  .rule-card .rule-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent-primary);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .rule-card p {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  .rule-card .dr-cr-table {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .dr-box, .cr-box {
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+  }
+  .dr-box { background: var(--badge-dr-bg); color: var(--badge-dr-color); border: 1px solid var(--badge-dr-bg); }
+  .cr-box { background: var(--badge-cr-bg); color: var(--badge-cr-color); border: 1px solid var(--badge-cr-bg); }
+  .dr-box strong, .cr-box strong { display: block; font-size: 14px; margin-bottom: 4px; }
+
+  /* ── Depreciation result ── */
+  .dep-result {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-primary);
+    padding: 24px;
+    margin-top: 20px;
+    font-family: 'DM Mono', monospace;
+  }
+  .dep-result h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 17px; font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text-accent);
+  }
+  .dep-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .dep-line .val { color: var(--accent-primary); font-weight: 600; }
+
+  /* ── GST breakdown ── */
+  .gst-breakdown {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 16px;
+    font-family: 'DM Mono', monospace;
+  }
+  .gst-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border-subtle);
+    font-size: 12px;
+    color: var(--text-primary);
+  }
+  .gst-row.header {
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent-primary);
+  }
+
+  /* ── Section divider ── */
+  .section-divider {
+    text-align: center;
+    margin: 32px 0;
+    position: relative;
+  }
+  .section-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 0; right: 0;
+    height: 1px;
+    background: var(--border-subtle);
+  }
+  .section-divider span {
+    background: var(--bg-primary);
+    padding: 0 16px;
+    position: relative;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  /* ── Alert boxes ── */
+  .alert {
+    padding: 12px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    margin-bottom: 12px;
+    border-left: 3px solid;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    animation: fadeUp 0.28s ease;
+  }
+  .alert-error   { border-color: #ef4444; background: rgba(239, 68, 68, 0.10);  color: #dc2626; }
+  .alert-success { border-color: #10b981; background: rgba(16, 185, 129, 0.10); color: #059669; }
+  .alert-info    { border-color: var(--accent-primary); background: var(--accent-soft); color: var(--text-accent); }
+
+  [data-theme="black"] .alert-success { color: #6ee7b7; }
+  [data-theme="black"] .alert-error   { color: #fca5a5; }
+
+  /* ── Journal entry list items ── */
+  .journal-entries-list { margin-top: 20px; }
+
+  .entry-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--accent-primary);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    gap: 16px;
+    align-items: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    animation: fadeUp 0.30s ease;
+  }
+  .entry-date { color: var(--accent-primary); }
+  .entry-narration {
+    font-size: 12px;
+    color: var(--text-secondary);
+    grid-column: 1/-1;
+    margin-top: 4px;
+    opacity: 0.9;
+    font-style: italic;
+  }
+
+  /* ── Profit / Loss box ── */
+  .profit-loss-box {
+    padding: 24px;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  }
+  .profit-loss-box.profit {
+    background: rgba(16, 185, 129, 0.12) !important;
+    border-top: 1px solid rgba(16, 185, 129, 0.22) !important;
+  }
+  .profit-loss-box.loss {
+    background: rgba(239, 68, 68, 0.12) !important;
+    border-top: 1px solid rgba(239, 68, 68, 0.22) !important;
+  }
+  .profit-loss-box .amount {
+    font-family: 'Inter', sans-serif;
+    font-size: 38px; font-weight: 800;
+    letter-spacing: -1px;
+  }
+  .profit { color: #10b981; }
+  .loss   { color: #ef4444; }
+
+  /* ── Info card ── */
+  .info-card {
+    margin-top: 24px;
+    padding: 16px;
+    background: var(--accent-soft);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+  }
+
+  /* ── Tooltip ── */
+  .tooltip-wrap { position: relative; display: inline-block; }
+  .tooltip-wrap .tooltip-text {
+    visibility: hidden; opacity: 0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-align: center;
+    border-radius: var(--radius-sm);
+    padding: 6px 12px;
+    position: absolute;
+    z-index: 200;
+    bottom: 110%; left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    transition: opacity 0.2s;
+    pointer-events: none;
+    box-shadow: var(--shadow-soft);
+  }
+  .tooltip-wrap:hover .tooltip-text { visibility: visible; opacity: 1; }
+
+  /* ── Mobile responsiveness ── */
+  @media (max-width: 768px) {
+    header { padding: 12px 16px; }
+    .logo-text h1 { font-size: 15px; }
+    .logo-text p  { display: none; }
+    .header-badge { display: none; }
+    .container { padding: 16px 12px; }
+    .form-grid { grid-template-columns: 1fr !important; }
+    .ledger-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .ledger-table th:first-child,
+    .ledger-table td:first-child {
+      position: sticky; left: 0; z-index: 2;
+      background: var(--bg-secondary);
+    }
+    .ledger-table thead th:first-child { background: var(--bg-table-hd); }
+    .bs-grid { grid-template-columns: 1fr !important; }
+    .bs-side:first-child { border-right: none; border-bottom: 1px solid var(--border-subtle); }
+    .btn-row { flex-wrap: wrap; }
+    .home-grid { grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 12px; }
+    .module-card { padding: 20px 16px; }
+    .module-icon { font-size: 28px; }
+    .module-name { font-size: 13px; }
+    .card { padding: 20px 16px; }
+    .stat-item { padding: 14px 18px; }
+    .home-title h2 { font-size: 20px; }
+    .header-nav { padding: 0 8px; }
+  }
+
+  /* ── Reduced motion ── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0s !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0s !important;
+    }
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     HEADER
+     ═══════════════════════════════════════ -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">₹</div>
+    <div class="logo-text">
+      <h1>Indian Accounts Solver</h1>
+      <p>भारतीय लेखांकन प्रणाली — As per Companies Act &amp; GAAP</p>
+    </div>
+  </div>
+
+  <div class="header-nav">
+    <button class="btn-back" id="back-btn" onclick="goHome()">← Home</button>
+    <span class="breadcrumb-sep" id="breadcrumb-sep">/</span>
+    <span class="breadcrumb-module" id="breadcrumb-text"></span>
+  </div>
+
+  <div class="header-right">
+    <span class="header-badge">Double Entry System</span>
+    <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle color theme">
+      <span id="theme-icon">🌙</span>
+    </button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════
+     HOME SCREEN  (shown on load)
+     ═══════════════════════════════════════ -->
+<div id="home-screen">
+  <div class="container">
+
+    <!-- Quick stat strip -->
+    <div class="stat-strip">
+      <div class="stat-item">
+        <span class="stat-value" id="stat-entries">0</span>
+        <span class="stat-label">Journal Entries</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value" id="stat-updated">—</span>
+        <span class="stat-label">Last Updated</span>
+      </div>
+    </div>
+
+    <!-- Title -->
+    <div class="home-title">
+      <h2>Select a Module</h2>
+      <p>मॉड्यूल चुनें — Click any card to get started</p>
+    </div>
+
+    <!-- 8 module cards -->
+    <div class="home-grid">
+
+      <div class="module-card" onclick="showModule('rules', '📖 Golden Rules')">
+        <div class="module-icon">📖</div>
+        <div class="module-name">Golden Rules</div>
+        <div class="module-name-hi">सुनहरे नियम</div>
+        <div class="module-desc">Real, Personal &amp; Nominal Accounts</div>
+      </div>
+
+      <div class="module-card" onclick="showModule('journal', '📔 Journal Entry')">
+        <div class="module-icon">📔</div>
+        <div class="module-name">Journal Entry</div>
+        <div class="module-name-hi">रोजनामचा</div>
+        <div class="module-desc">Record every business transaction</div>
+      </div>
+
+      <div class="module-card" onclick="showModule('ledger', '📒 Ledger')">
+        <div class="module-icon">📒</div>
+        <div class="module-name">Ledger</div>
+        <div class="module-name-hi">खाता बही</div>
+        <div class="module-desc">T-Account from Journal entries</div>
+      </div>
+
+      <div class="module-card" onclick="showModule('trial', '⚖️ Trial Balance')">
+        <div class="module-icon">⚖️</div>
+        <div class="module-name">Trial Balance</div>
+        <div class="module-name-hi">तलपट</div>
+        <div class="module-desc">Auto-generated from Journal entries</div>
+      </div>
+
+      <div class="module-card" onclick="showModule('pl', '📊 P&amp;L Account')">
+        <div class="module-icon">📊</div>
+        <div class="module-name">P&amp;L Account</div>
+        <div class="module-name-hi">लाभ-हानि खाता</div>
+        <div class="module-desc">Trading &amp; Profit &amp; Loss Account</div>
+      </div>
+
+      <div class="module-card" onclick="showModule('balance', '🏛️ Balance Sheet')">
+        <div class="module-icon">🏛️</div>
+        <div class="module-name">Balance Sheet</div>
+        <div class="module-name-hi">चिट्ठा</div>
+        <div class="module-desc">As per Schedule III, Companies Act 2013</div>
+      </div>
+
+      <div class="module-card" onclick="showModule('depreciation', '📉 Depreciation')">
+        <div class="module-icon">📉</div>
+        <div class="module-name">Depreciation</div>
+        <div class="module-name-hi">मूल्यह्रास</div>
+        <div class="module-desc">SLM &amp; WDV methods calculator</div>
+      </div>
+
+      <div class="module-card" onclick="showModule('gst', '🧾 GST Calculator')">
+        <div class="module-icon">🧾</div>
+        <div class="module-name">GST Calculator</div>
+        <div class="module-name-hi">माल एवं सेवा कर</div>
+        <div class="module-desc">CGST + SGST / IGST as per GST Act 2017</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     APP CONTAINER  (hidden until module selected)
+     ═══════════════════════════════════════ -->
+<div id="app-container">
+<div class="container">
+
+  <!-- TABS BAR — hidden visually, kept for JS compatibility -->
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('rules', this)">📖 Rules</button>
+    <button class="tab" onclick="showTab('journal', this)">📔 Journal Entry</button>
+    <button class="tab" onclick="showTab('ledger', this)">📒 Ledger</button>
+    <button class="tab" onclick="showTab('trial', this)">⚖️ Trial Balance</button>
+    <button class="tab" onclick="showTab('pl', this)">📊 P&L Account</button>
+    <button class="tab" onclick="showTab('balance', this)">🏛️ Balance Sheet</button>
+    <button class="tab" onclick="showTab('depreciation', this)">📉 Depreciation</button>
+    <button class="tab" onclick="showTab('gst', this)">🧾 GST Calculator</button>
+  </div>
+
+  <!-- RULES PANEL -->
+  <div id="rules" class="panel active">
+    <div class="card">
+      <h2>Golden Rules of Indian Accounting</h2>
+      <p class="subtitle">Traditional Double-Entry Bookkeeping — भारतीय लेखा के सुनहरे नियम</p>
+      <div class="rules-grid">
+        <div class="rule-card">
+          <div class="rule-title">Real Account</div>
+          <div class="rule-meta">वास्तविक खाता — Tangible &amp; Intangible Assets</div>
+          <p>Governs accounts related to assets, both tangible (land, machinery, cash) and intangible (goodwill, patents).</p>
+          <div class="dr-cr-table">
+            <div class="dr-box"><strong>DR</strong>What comes in</div>
+            <div class="cr-box"><strong>CR</strong>What goes out</div>
+          </div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-title">Personal Account</div>
+          <div class="rule-meta">व्यक्तिगत खाता — Persons, Firms, Companies</div>
+          <p>Governs accounts related to individuals, firms, companies, debtors, and creditors.</p>
+          <div class="dr-cr-table">
+            <div class="dr-box"><strong>DR</strong>The receiver</div>
+            <div class="cr-box"><strong>CR</strong>The giver</div>
+          </div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-title">Nominal Account</div>
+          <div class="rule-meta">नाममात्र खाता — Expenses, Losses, Incomes</div>
+          <p>Governs accounts relating to expenses, losses, incomes, and gains of a business.</p>
+          <div class="dr-cr-table">
+            <div class="dr-box"><strong>DR</strong>All expenses &amp; losses</div>
+            <div class="cr-box"><strong>CR</strong>All incomes &amp; gains</div>
+          </div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Modern Approach — Debit &amp; Credit Rules</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-family:'DM Mono',monospace;font-size:12px;">
+          <div><span style="color:var(--red);font-weight:700;">DR ↑</span> Assets increase</div>
+          <div><span style="color:var(--green);font-weight:700;">CR ↑</span> Liabilities increase</div>
+          <div><span style="color:var(--red);font-weight:700;">DR ↑</span> Expenses increase</div>
+          <div><span style="color:var(--green);font-weight:700;">CR ↑</span> Income increase</div>
+          <div><span style="color:var(--red);font-weight:700;">DR ↑</span> Losses increase</div>
+          <div><span style="color:var(--green);font-weight:700;">CR ↑</span> Capital increase</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JOURNAL PANEL -->
+  <div id="journal" class="panel">
+    <div class="card">
+      <h2>Journal Entry</h2>
+      <p class="subtitle">रोजनामचा — Record Every Business Transaction</p>
+      <div class="form-grid">
+        <div>
+          <label>Date</label>
+          <input type="date" id="j-date">
+        </div>
+        <div>
+          <label>Voucher / Reference No.</label>
+          <input type="text" id="j-voucher" placeholder="e.g. JV-001">
+        </div>
+        <div>
+          <label>Debit Account (Dr.)</label>
+          <input type="text" id="j-dr-account" placeholder="e.g. Cash A/c, Machinery A/c">
+        </div>
+        <div>
+          <label>Debit Amount (₹)</label>
+          <input type="number" id="j-dr-amount" placeholder="0.00" min="0">
+        </div>
+        <div>
+          <label>Credit Account (Cr.)</label>
+          <input type="text" id="j-cr-account" placeholder="e.g. Bank A/c, Capital A/c">
+        </div>
+        <div>
+          <label>Credit Amount (₹)</label>
+          <input type="number" id="j-cr-amount" placeholder="0.00" min="0">
+        </div>
+      </div>
+      <div>
+        <label>Narration (विवरण)</label>
+        <textarea id="j-narration" rows="2" placeholder="Being the amount paid for..."></textarea>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;" class="btn-row">
+        <button class="btn btn-primary" onclick="addJournalEntry()">+ Add Entry</button>
+        <button class="btn btn-secondary" onclick="clearJournal()">Clear All</button>
+        <div class="tooltip-wrap">
+          <button class="btn btn-secondary" onclick="loadSampleData()">📋 Load Sample Data</button>
+          <span class="tooltip-text">For testing only — does not overwrite existing data</span>
+        </div>
+        <button class="btn btn-danger" onclick="clearSavedData()" style="font-size:12px;padding:12px 20px;">🗑 Clear Saved Data</button>
+      </div>
+      <div id="j-alert"></div>
+    </div>
+
+    <div class="card">
+      <h2>Journal Book</h2>
+      <p class="subtitle">All Recorded Transactions</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;" class="btn-row">
+        <button class="btn btn-secondary" onclick="exportCSV()">⬇ Export CSV</button>
+        <button class="btn btn-secondary" onclick="exportExcel()">⬇ Export Excel (.xlsx)</button>
+      </div>
+      <div class="ledger-wrap">
+        <table class="ledger-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Particulars</th>
+              <th>L.F.</th>
+              <th class="num">Dr. Amount (₹)</th>
+              <th class="num">Cr. Amount (₹)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="journal-tbody">
+            <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--gold);font-family:'DM Mono',monospace;font-size:12px;">No entries yet. Add your first journal entry above.</td></tr>
+          </tbody>
+          <tfoot>
+            <tr class="totals-row">
+              <td colspan="3" style="font-family:'DM Mono',monospace;font-size:12px;">TOTAL</td>
+              <td class="num amount-dr" id="j-total-dr">₹0.00</td>
+              <td class="num amount-cr" id="j-total-cr">₹0.00</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEDGER PANEL -->
+  <div id="ledger" class="panel">
+    <div class="card">
+      <h2>Ledger Account (T-Account)</h2>
+      <p class="subtitle">खाता बही — Post from Journal to Ledger</p>
+      <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px;">
+        <div style="flex:1;min-width:200px;">
+          <label>Account Name</label>
+          <input type="text" id="l-account-name" placeholder="e.g. Cash A/c, Sales A/c">
+        </div>
+        <button class="btn btn-primary" onclick="generateLedger()">Generate Ledger</button>
+      </div>
+      <div id="ledger-output"></div>
+    </div>
+  </div>
+
+  <!-- TRIAL BALANCE PANEL -->
+  <div id="trial" class="panel">
+    <div class="card">
+      <h2>Trial Balance</h2>
+      <p class="subtitle">तलपट — Auto-generated from Journal Entries</p>
+      <button class="btn btn-primary" onclick="generateTrialBalance()" style="margin-bottom:20px;">Generate Trial Balance</button>
+      <div id="trial-output"></div>
+    </div>
+  </div>
+
+  <!-- P&L PANEL -->
+  <div id="pl" class="panel">
+    <div class="card">
+      <h2>Profit &amp; Loss Account</h2>
+      <p class="subtitle">लाभ-हानि खाता — As per Indian GAAP</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+        <div>
+          <label>Opening Stock (₹)</label>
+          <input type="number" id="pl-opening" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Closing Stock (₹)</label>
+          <input type="number" id="pl-closing" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Purchases (₹)</label>
+          <input type="number" id="pl-purchases" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Sales / Revenue (₹)</label>
+          <input type="number" id="pl-sales" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Direct Expenses (₹)</label>
+          <input type="number" id="pl-direct-exp" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Returns Inward (₹)</label>
+          <input type="number" id="pl-returns-in" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Wages &amp; Salaries (₹)</label>
+          <input type="number" id="pl-wages" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Other Income (₹)</label>
+          <input type="number" id="pl-other-income" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Rent &amp; Rates (₹)</label>
+          <input type="number" id="pl-rent" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Depreciation (₹)</label>
+          <input type="number" id="pl-depreciation" placeholder="0" min="0">
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="calcPL()">Calculate P&amp;L</button>
+      <div id="pl-output" style="margin-top:20px;"></div>
+    </div>
+  </div>
+
+  <!-- BALANCE SHEET PANEL -->
+  <div id="balance" class="panel">
+    <div class="card">
+      <h2>Balance Sheet</h2>
+      <p class="subtitle">चिट्ठा — As per Schedule III, Companies Act 2013</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+        <div style="grid-column:1/-1;font-family:'DM Mono',monospace;font-size:11px;color:var(--saffron);text-transform:uppercase;letter-spacing:2px;padding:8px 0;border-bottom:1px solid var(--ledger);">LIABILITIES SIDE</div>
+        <div>
+          <label>Share Capital (₹)</label>
+          <input type="number" id="bs-capital" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Reserves &amp; Surplus (₹)</label>
+          <input type="number" id="bs-reserves" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Long-term Borrowings (₹)</label>
+          <input type="number" id="bs-lt-loans" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Creditors / Payables (₹)</label>
+          <input type="number" id="bs-creditors" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Other Current Liabilities (₹)</label>
+          <input type="number" id="bs-other-liab" placeholder="0" min="0">
+        </div>
+        <div style="grid-column:1/-1;font-family:'DM Mono',monospace;font-size:11px;color:var(--green);text-transform:uppercase;letter-spacing:2px;padding:8px 0;border-bottom:1px solid var(--ledger);margin-top:8px;">ASSETS SIDE</div>
+        <div>
+          <label>Fixed Assets (₹)</label>
+          <input type="number" id="bs-fixed" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Investments (₹)</label>
+          <input type="number" id="bs-investments" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Inventories / Stock (₹)</label>
+          <input type="number" id="bs-stock" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Debtors / Receivables (₹)</label>
+          <input type="number" id="bs-debtors" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Cash &amp; Bank (₹)</label>
+          <input type="number" id="bs-cash" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Other Current Assets (₹)</label>
+          <input type="number" id="bs-other-assets" placeholder="0" min="0">
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="calcBalanceSheet()">Generate Balance Sheet</button>
+      <div id="bs-output" style="margin-top:20px;"></div>
+    </div>
+  </div>
+
+  <!-- DEPRECIATION PANEL -->
+  <div id="depreciation" class="panel">
+    <div class="card">
+      <h2>Depreciation Calculator</h2>
+      <p class="subtitle">मूल्यह्रास — SLM &amp; WDV as per Companies Act &amp; Income Tax Act</p>
+      <div class="form-grid">
+        <div>
+          <label>Asset Name</label>
+          <input type="text" id="dep-asset" placeholder="e.g. Plant &amp; Machinery">
+        </div>
+        <div>
+          <label>Cost of Asset (₹)</label>
+          <input type="number" id="dep-cost" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Salvage / Scrap Value (₹)</label>
+          <input type="number" id="dep-salvage" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Useful Life (Years)</label>
+          <input type="number" id="dep-life" placeholder="e.g. 10" min="1">
+        </div>
+        <div>
+          <label>Method</label>
+          <select id="dep-method">
+            <option value="slm">SLM — Straight Line Method</option>
+            <option value="wdv">WDV — Written Down Value</option>
+          </select>
+        </div>
+        <div>
+          <label>WDV Rate (%) — for WDV only</label>
+          <input type="number" id="dep-rate" placeholder="e.g. 15" min="0" max="100">
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="calcDepreciation()">Calculate Depreciation</button>
+      <div id="dep-output"></div>
+    </div>
+  </div>
+
+  <!-- GST PANEL -->
+  <div id="gst" class="panel">
+    <div class="card">
+      <h2>GST Calculator</h2>
+      <p class="subtitle">माल एवं सेवा कर — CGST + SGST / IGST (as per GST Act 2017)</p>
+      <div class="form-grid">
+        <div>
+          <label>Transaction Type</label>
+          <select id="gst-type">
+            <option value="intra">Intra-State (CGST + SGST)</option>
+            <option value="inter">Inter-State (IGST)</option>
+          </select>
+        </div>
+        <div>
+          <label>GST Rate (%)</label>
+          <select id="gst-rate">
+            <option value="5">5% — Essential goods</option>
+            <option value="12">12% — Standard</option>
+            <option value="18" selected>18% — Most services</option>
+            <option value="28">28% — Luxury goods</option>
+            <option value="0">0% — Exempt</option>
+          </select>
+        </div>
+        <div>
+          <label>Base Amount (₹) — Exclusive of GST</label>
+          <input type="number" id="gst-amount" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Quantity / Units</label>
+          <input type="number" id="gst-qty" placeholder="1" min="1" value="1">
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="calcGST()">Calculate GST</button>
+      <div id="gst-output"></div>
+    </div>
+  </div>
+
+</div><!-- .container -->
+</div><!-- #app-container -->
+
+<script>
+  // ═══════════════════════════════════════════════════
+  // STATE — declared first so all functions can access it
+  // ═══════════════════════════════════════════════════
+  let journalEntries = [];
+
+  // ═══════════════════════════════════════════════════
+  // THEME SYSTEM
+  // ═══════════════════════════════════════════════════
+  function toggleTheme() {
+    document.documentElement.classList.add('theme-switching');
+    const current = document.documentElement.getAttribute('data-theme') || 'white';
+    const next = current === 'white' ? 'black' : 'white';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme-preference', next);
+    updateThemeIcon();
+    // Matches the 0.4s CSS transition duration
+    setTimeout(function() {
+      document.documentElement.classList.remove('theme-switching');
+    }, 400);
+  }
+
+  function initTheme() {
+    const saved = localStorage.getItem('theme-preference') || 'white';
+    document.documentElement.setAttribute('data-theme', saved);
+    updateThemeIcon();
+  }
+
+  function updateThemeIcon() {
+    const theme = document.documentElement.getAttribute('data-theme') || 'white';
+    document.getElementById('theme-icon').textContent = theme === 'white' ? '🌙' : '☀️';
+  }
+
+  // Helper: respects prefers-reduced-motion for scroll behaviour
+  function scrollTop() {
+    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: prefersReduced ? 'auto' : 'smooth' });
+  }
+
+  // ═══════════════════════════════════════════════════
+  // ROUTING — Home Screen & Module Navigation
+  // ═══════════════════════════════════════════════════
+  function showModule(moduleId, moduleName) {
+    document.getElementById('home-screen').classList.add('hidden');
+
+    var app = document.getElementById('app-container');
+    app.classList.add('visible');
+
+    // Show the target panel
+    document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+    document.getElementById(moduleId).classList.add('active');
+
+    // Update breadcrumb
+    var backBtn  = document.getElementById('back-btn');
+    var sep      = document.getElementById('breadcrumb-sep');
+    var crumb    = document.getElementById('breadcrumb-text');
+    backBtn.style.display  = 'flex';
+    sep.style.display      = 'inline';
+    crumb.style.display    = 'inline';
+    crumb.textContent      = moduleName;
+
+    scrollTop();
+  }
+
+  function goHome() {
+    document.getElementById('home-screen').classList.remove('hidden');
+    document.getElementById('app-container').classList.remove('visible');
+
+    var backBtn = document.getElementById('back-btn');
+    var sep     = document.getElementById('breadcrumb-sep');
+    var crumb   = document.getElementById('breadcrumb-text');
+    backBtn.style.display = 'none';
+    sep.style.display     = 'none';
+    crumb.style.display   = 'none';
+
+    updateStatStrip();
+    scrollTop();
+  }
+
+  function updateStatStrip() {
+    document.getElementById('stat-entries').textContent = journalEntries.length;
+    if (journalEntries.length > 0) {
+      var last = journalEntries[journalEntries.length - 1];
+      document.getElementById('stat-updated').textContent = last.date;
+    } else {
+      document.getElementById('stat-updated').textContent = '—';
+    }
+  }
+
+  // ═══════════════════════════════════════════════════
+  // EXISTING JS — preserved exactly (zero regression)
+  // ═══════════════════════════════════════════════════
+
+  // NEW: localStorage persistence — save all journal entries
+  function saveToLocalStorage() {
+    try {
+      localStorage.setItem('indian_accounts_journal', JSON.stringify(journalEntries));
+    } catch(e) {
+      console.warn('localStorage save failed:', e);
+    }
+  }
+
+  // NEW: Load entries from localStorage on startup
+  function loadFromLocalStorage() {
+    try {
+      const saved = localStorage.getItem('indian_accounts_journal');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          journalEntries = parsed;
+          renderJournal();
+        }
+      }
+    } catch(e) {
+      console.warn('indian_accounts: Failed to parse saved journal data, starting fresh.', e);
+      journalEntries = [];
+    }
+  }
+
+  // NEW: Clear saved data from localStorage with confirmation
+  function clearSavedData() {
+    if (confirm('Are you sure you want to permanently delete all saved journal entries? This cannot be undone.')) {
+      localStorage.removeItem('indian_accounts_journal');
+      journalEntries = [];
+      renderJournal();
+      document.getElementById('j-alert').innerHTML = '<div class="alert alert-success">Saved data cleared successfully.</div>';
+    }
+  }
+
+  // NEW: Export journal entries to CSV
+  function exportCSV() {
+    if (journalEntries.length === 0) { alert('No journal entries to export.'); return; }
+    const headers = ['Date', 'Particulars (Dr)', 'Particulars (Cr)', 'L.F.', 'Dr Amount (INR)', 'Cr Amount (INR)', 'Narration'];
+    const rows = journalEntries.map(e => [
+      e.date, e.drAccount, e.crAccount, e.voucher,
+      e.drAmount.toFixed(2), e.crAmount.toFixed(2), e.narration
+    ]);
+    const csvContent = [headers, ...rows]
+      .map(row => row.map(cell => '"' + String(cell || '').replace(/"/g, '""') + '"').join(','))
+      .join('\n');
+    // NEW: BOM (\uFEFF) ensures Excel opens the CSV correctly with UTF-8 encoding (supports ₹ and Hindi text)
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'indian_accounts_journal.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // NEW: Export journal entries to Excel (.xlsx) using SheetJS
+  function exportExcel() {
+    if (journalEntries.length === 0) { alert('No journal entries to export.'); return; }
+    if (typeof XLSX === 'undefined') { alert('Excel library not loaded. Please check your internet connection.'); return; }
+    const data = [
+      ['Date', 'Particulars (Dr)', 'Particulars (Cr)', 'L.F.', 'Dr Amount (INR)', 'Cr Amount (INR)', 'Narration'],
+      ...journalEntries.map(e => [e.date, e.drAccount, e.crAccount, e.voucher, e.drAmount, e.crAmount, e.narration || ''])
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    // NEW: Set column widths for readability
+    ws['!cols'] = [{ wch: 12 }, { wch: 28 }, { wch: 28 }, { wch: 10 }, { wch: 16 }, { wch: 16 }, { wch: 40 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Journal');
+    XLSX.writeFile(wb, 'indian_accounts_journal.xlsx');
+  }
+
+  // NEW: Load 3 realistic Indian business sample transactions (appends to existing data)
+  function loadSampleData() {
+    const today = new Date().toISOString().split('T')[0];
+    const samples = [
+      {
+        date: today, voucher: 'JV-S01',
+        drAccount: 'Cash A/c', drAmount: 100000,
+        crAccount: 'Capital A/c', crAmount: 100000,
+        narration: 'Being capital of ₹1,00,000 introduced by proprietor in cash'
+      },
+      {
+        date: today, voucher: 'JV-S02',
+        drAccount: 'Purchase A/c', drAmount: 25000,
+        crAccount: 'Cash A/c', crAmount: 25000,
+        narration: 'Being goods purchased for cash (cash purchase)'
+      },
+      {
+        date: today, voucher: 'JV-S03',
+        drAccount: 'M/s Sharma Traders (Debtors A/c)', drAmount: 35400,
+        crAccount: 'Sales A/c (incl. 18% GST)', crAmount: 35400,
+        narration: 'Being goods sold on credit — ₹30,000 + CGST ₹2,700 + SGST ₹2,700 = ₹35,400'
+      }
+    ];
+    journalEntries.push(...samples);
+    saveToLocalStorage();
+    renderJournal();
+    document.getElementById('j-alert').innerHTML = '<div class="alert alert-success">3 sample transactions loaded successfully!</div>';
+  }
+
+  function fmt(n) {
+    return '₹' + Number(n).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function showTab(id, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // ---- Journal ----
+  function addJournalEntry() {
+    const date = document.getElementById('j-date').value;
+    const voucher = document.getElementById('j-voucher').value.trim() || 'JV-' + String(journalEntries.length + 1).padStart(3, '0');
+    const drAccount = document.getElementById('j-dr-account').value.trim();
+    // NEW: Validate numeric inputs — prevent negative/NaN
+    const drAmountRaw = document.getElementById('j-dr-amount').value;
+    const drAmount = parseFloat(drAmountRaw);
+    const crAccount = document.getElementById('j-cr-account').value.trim();
+    const crAmountRaw = document.getElementById('j-cr-amount').value;
+    const crAmount = parseFloat(crAmountRaw);
+    const narration = document.getElementById('j-narration').value.trim();
+
+    const alertEl = document.getElementById('j-alert');
+
+    if (!date) { alertEl.innerHTML = '<div class="alert alert-error">Please select a date.</div>'; return; }
+    if (!drAccount) { alertEl.innerHTML = '<div class="alert alert-error">Please enter the Debit Account.</div>'; return; }
+    if (!crAccount) { alertEl.innerHTML = '<div class="alert alert-error">Please enter the Credit Account.</div>'; return; }
+    // NEW: Reject NaN, negative, or zero debit amounts
+    if (isNaN(drAmount) || drAmount <= 0) { alertEl.innerHTML = '<div class="alert alert-error">Debit amount must be greater than zero.</div>'; return; }
+    // NEW: Reject NaN, negative, or zero credit amounts
+    if (isNaN(crAmount) || crAmount <= 0) { alertEl.innerHTML = '<div class="alert alert-error">Credit amount must be greater than zero.</div>'; return; }
+    if (Math.abs(drAmount - crAmount) > 0.01) {
+      alertEl.innerHTML = '<div class="alert alert-error">Debit and Credit amounts must be equal (Double Entry System).</div>'; return;
+    }
+
+    journalEntries.push({ date, voucher, drAccount, drAmount, crAccount, crAmount, narration });
+    // NEW: Persist to localStorage on every add
+    saveToLocalStorage();
+    alertEl.innerHTML = '<div class="alert alert-success">Entry added successfully! Debit = Credit ✓</div>';
+    renderJournal();
+
+    // Clear fields
+    document.getElementById('j-dr-account').value = '';
+    document.getElementById('j-dr-amount').value = '';
+    document.getElementById('j-cr-account').value = '';
+    document.getElementById('j-cr-amount').value = '';
+    document.getElementById('j-narration').value = '';
+    document.getElementById('j-voucher').value = '';
+  }
+
+  function deleteEntry(i) {
+    journalEntries.splice(i, 1);
+    // NEW: Persist updated list to localStorage after deletion
+    saveToLocalStorage();
+    renderJournal();
+  }
+
+  function clearJournal() {
+    journalEntries = [];
+    // NEW: Persist empty state to localStorage
+    saveToLocalStorage();
+    renderJournal();
+    document.getElementById('j-alert').innerHTML = '';
+  }
+
+  function renderJournal() {
+    const tbody = document.getElementById('journal-tbody');
+    if (journalEntries.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--gold);font-family:\'DM Mono\',monospace;font-size:12px;">No entries yet. Add your first journal entry above.</td></tr>';
+      document.getElementById('j-total-dr').textContent = '₹0.00';
+      document.getElementById('j-total-cr').textContent = '₹0.00';
+      return;
+    }
+
+    let html = '';
+    let totalDr = 0, totalCr = 0;
+
+    journalEntries.forEach((e, i) => {
+      totalDr += e.drAmount;
+      totalCr += e.crAmount;
+      html += `
+        <tr>
+          <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--gold);">${escHtml(e.date)}</td>
+          <td>
+            <div style="font-family:'DM Mono',monospace;font-size:13px;">
+              <span class="badge badge-dr">Dr</span> ${escHtml(e.drAccount)}
+            </div>
+            <div style="font-family:'DM Mono',monospace;font-size:13px;margin-top:4px;padding-left:16px;">
+              <span class="badge badge-cr">Cr</span> ${escHtml(e.crAccount)}
+            </div>
+            ${e.narration ? `<div style="font-size:11px;color:#888;font-style:italic;margin-top:4px;padding-left:16px;">${escHtml(e.narration)}</div>` : ''}
+          </td>
+          <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);">${escHtml(e.voucher)}</td>
+          <td class="num amount-dr">${fmt(e.drAmount)}</td>
+          <td class="num amount-cr">${fmt(e.crAmount)}</td>
+          <td><button class="btn btn-danger" onclick="deleteEntry(${i})">Del</button></td>
+        </tr>
+      `;
+    });
+
+    tbody.innerHTML = html;
+    document.getElementById('j-total-dr').textContent = fmt(totalDr);
+    document.getElementById('j-total-cr').textContent = fmt(totalCr);
+  }
+
+  // ---- Ledger ----
+  function generateLedger() {
+    const name = document.getElementById('l-account-name').value.trim().toLowerCase();
+    const out = document.getElementById('ledger-output');
+    if (!name) { out.innerHTML = '<div class="alert alert-error">Please enter an account name.</div>'; return; }
+
+    const drEntries = journalEntries.filter(e => e.drAccount.toLowerCase().includes(name));
+    const crEntries = journalEntries.filter(e => e.crAccount.toLowerCase().includes(name));
+
+    if (drEntries.length === 0 && crEntries.length === 0) {
+      out.innerHTML = '<div class="alert alert-info">No entries found for this account. Add journal entries first.</div>'; return;
+    }
+
+    let drTotal = drEntries.reduce((s, e) => s + e.drAmount, 0);
+    let crTotal = crEntries.reduce((s, e) => s + e.crAmount, 0);
+    let balance = drTotal - crTotal;
+
+    let html = `
+      <div style="border:2px solid var(--ink);margin-top:8px;">
+        <div style="background:var(--ink);color:var(--paper);padding:12px 20px;font-family:'Playfair Display',serif;font-size:18px;text-align:center;font-weight:700;">
+          ${escHtml(document.getElementById('l-account-name').value)} (T-Account)
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;">
+          <div style="padding:16px;border-right:1.5px solid var(--ink);">
+            <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--red);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;font-weight:700;">Dr. Side</div>
+    `;
+    drEntries.forEach(e => {
+      html += `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--ledger);font-family:'DM Mono',monospace;font-size:12px;">
+        <span>${escHtml(e.date)} — ${escHtml(e.crAccount)}</span><span class="amount-dr">${fmt(e.drAmount)}</span></div>`;
+    });
+    html += `
+        <div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;border-top:2px solid var(--ink);margin-top:8px;">
+          <span>Total Dr.</span><span class="amount-dr">${fmt(drTotal)}</span>
+        </div>
+          </div>
+          <div style="padding:16px;">
+            <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--green);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;font-weight:700;">Cr. Side</div>
+    `;
+    crEntries.forEach(e => {
+      html += `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--ledger);font-family:'DM Mono',monospace;font-size:12px;">
+        <span>${escHtml(e.date)} — ${escHtml(e.drAccount)}</span><span class="amount-cr">${fmt(e.crAmount)}</span></div>`;
+    });
+    html += `
+        <div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;border-top:2px solid var(--ink);margin-top:8px;">
+          <span>Total Cr.</span><span class="amount-cr">${fmt(crTotal)}</span>
+        </div>
+          </div>
+        </div>
+        <div style="background:var(--ledger);padding:12px 20px;font-family:'DM Mono',monospace;font-size:13px;display:flex;justify-content:space-between;border-top:1.5px solid var(--ink);">
+          <span><strong>Closing Balance:</strong></span>
+          <span class="${balance >= 0 ? 'amount-dr' : 'amount-cr'}" style="font-weight:700;">${fmt(Math.abs(balance))} ${balance >= 0 ? '(Dr.)' : '(Cr.)'}</span>
+        </div>
+      </div>
+    `;
+    out.innerHTML = html;
+  }
+
+  // ---- Trial Balance ----
+  function generateTrialBalance() {
+    const out = document.getElementById('trial-output');
+    if (journalEntries.length === 0) {
+      out.innerHTML = '<div class="alert alert-info">No journal entries found. Please add entries in the Journal tab first.</div>'; return;
+    }
+
+    const accounts = {};
+    journalEntries.forEach(e => {
+      if (!accounts[e.drAccount]) accounts[e.drAccount] = { dr: 0, cr: 0 };
+      if (!accounts[e.crAccount]) accounts[e.crAccount] = { dr: 0, cr: 0 };
+      accounts[e.drAccount].dr += e.drAmount;
+      accounts[e.crAccount].cr += e.crAmount;
+    });
+
+    let totalDr = 0, totalCr = 0;
+    let rows = '';
+
+    Object.entries(accounts).forEach(([name, bal]) => {
+      const netDr = bal.dr > bal.cr ? bal.dr - bal.cr : 0;
+      const netCr = bal.cr > bal.dr ? bal.cr - bal.dr : 0;
+      totalDr += netDr;
+      totalCr += netCr;
+      rows += `<tr>
+        <td style="font-family:'DM Mono',monospace;">${escHtml(name)}</td>
+        <td class="num amount-dr">${netDr > 0 ? fmt(netDr) : '—'}</td>
+        <td class="num amount-cr">${netCr > 0 ? fmt(netCr) : '—'}</td>
+      </tr>`;
+    });
+
+    const balanced = Math.abs(totalDr - totalCr) < 0.01;
+    out.innerHTML = `
+      <div class="alert ${balanced ? 'alert-success' : 'alert-error'}">${balanced ? '✓ Trial Balance is BALANCED — Debit = Credit' : '✗ Trial Balance does NOT balance — Check your entries!'}</div>
+      <div class="ledger-wrap">
+        <table class="ledger-table">
+          <thead><tr><th>Account Name</th><th class="num">Debit (₹)</th><th class="num">Credit (₹)</th></tr></thead>
+          <tbody>${rows}</tbody>
+          <tfoot>
+            <tr class="totals-row">
+              <td style="font-family:'DM Mono',monospace;">GRAND TOTAL</td>
+              <td class="num amount-dr">${fmt(totalDr)}</td>
+              <td class="num amount-cr">${fmt(totalCr)}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    `;
+  }
+
+  // ---- P&L ----
+  function calcPL() {
+    const openingStock = parseFloat(document.getElementById('pl-opening').value) || 0;
+    const closingStock = parseFloat(document.getElementById('pl-closing').value) || 0;
+    const purchases = parseFloat(document.getElementById('pl-purchases').value) || 0;
+    const sales = parseFloat(document.getElementById('pl-sales').value) || 0;
+    const directExp = parseFloat(document.getElementById('pl-direct-exp').value) || 0;
+    const returnsIn = parseFloat(document.getElementById('pl-returns-in').value) || 0;
+    const wages = parseFloat(document.getElementById('pl-wages').value) || 0;
+    const otherIncome = parseFloat(document.getElementById('pl-other-income').value) || 0;
+    const rent = parseFloat(document.getElementById('pl-rent').value) || 0;
+    const depreciation = parseFloat(document.getElementById('pl-depreciation').value) || 0;
+
+    const netSales = sales - returnsIn;
+    const cogsSold = openingStock + purchases + directExp - closingStock;
+    const grossProfit = netSales - cogsSold;
+    const isGrossProfit = grossProfit >= 0;
+    const totalIndirectExp = wages + rent + depreciation;
+    const netProfit = grossProfit + otherIncome - totalIndirectExp;
+
+    const isProfit = netProfit >= 0;
+
+    document.getElementById('pl-output').innerHTML = `
+      <div style="border:2px solid var(--ink);">
+        <div style="background:var(--ink);color:var(--paper);padding:14px 20px;font-family:'Playfair Display',serif;font-size:18px;text-align:center;font-weight:700;">Trading & Profit & Loss Account</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;">
+          <div style="padding:20px;border-right:1.5px solid var(--ink);">
+            <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--red);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;">Dr. — Expenses</div>
+            ${plRow('Opening Stock', openingStock)}
+            ${plRow('Purchases', purchases)}
+            ${plRow('Direct Expenses', directExp)}
+            ${!isGrossProfit ? plRowBold('Gross Loss (c/d)', Math.abs(grossProfit), 'amount-dr') : ''}
+            <div style="border-top:2px solid var(--ink);margin:8px 0;"></div>
+            ${plRow('Wages & Salaries', wages)}
+            ${plRow('Rent & Rates', rent)}
+            ${plRow('Depreciation', depreciation)}
+            ${isProfit ? plRowBold('Net Profit (transferred to Capital)', netProfit, 'amount-cr') : ''}
+          </div>
+          <div style="padding:20px;">
+            <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--green);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;">Cr. — Income</div>
+            ${plRow('Sales (Net of Returns)', netSales, 'amount-cr')}
+            ${plRow('Closing Stock', closingStock, 'amount-cr')}
+            ${isGrossProfit ? plRowBold('Gross Profit (c/d)', grossProfit, 'amount-cr') : ''}
+            <div style="border-top:2px solid var(--ink);margin:8px 0;"></div>
+            ${isGrossProfit ? plRow('Gross Profit (b/d)', grossProfit, 'amount-cr') : ''}
+            ${plRow('Other Income', otherIncome, 'amount-cr')}
+            ${!isProfit ? plRowBold('Net Loss (transferred to Capital)', Math.abs(netProfit), 'amount-dr') : ''}
+          </div>
+        </div>
+        <div class="profit-loss-box ${isProfit ? 'profit' : 'loss'}" style="background:${isProfit ? '#e8f4ee' : '#fde8e8'};border-top:1.5px solid var(--ink);">
+          <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">${isProfit ? 'Net Profit' : 'Net Loss'}</div>
+          <div class="amount">${fmt(Math.abs(netProfit))}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function plRow(label, amount, cls = '') {
+    if (amount === 0) return '';
+    return `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--ledger);font-family:'DM Mono',monospace;font-size:12px;">
+      <span>${escHtml(label)}</span><span class="${cls}">${fmt(amount)}</span>
+    </div>`;
+  }
+
+  function plRowBold(label, amount, cls = '') {
+    if (amount === 0) return '';
+    return `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--ledger);font-family:'DM Mono',monospace;font-size:12px;font-weight:700;">
+      <span>${escHtml(label)}</span><span class="${cls}">${fmt(amount)}</span>
+    </div>`;
+  }
+
+  // ---- Balance Sheet ----
+  function calcBalanceSheet() {
+    const capital = parseFloat(document.getElementById('bs-capital').value) || 0;
+    const reserves = parseFloat(document.getElementById('bs-reserves').value) || 0;
+    const ltLoans = parseFloat(document.getElementById('bs-lt-loans').value) || 0;
+    const creditors = parseFloat(document.getElementById('bs-creditors').value) || 0;
+    const otherLiab = parseFloat(document.getElementById('bs-other-liab').value) || 0;
+
+    const fixed = parseFloat(document.getElementById('bs-fixed').value) || 0;
+    const investments = parseFloat(document.getElementById('bs-investments').value) || 0;
+    const stock = parseFloat(document.getElementById('bs-stock').value) || 0;
+    const debtors = parseFloat(document.getElementById('bs-debtors').value) || 0;
+    const cash = parseFloat(document.getElementById('bs-cash').value) || 0;
+    const otherAssets = parseFloat(document.getElementById('bs-other-assets').value) || 0;
+
+    const totalLiab = capital + reserves + ltLoans + creditors + otherLiab;
+    const totalAssets = fixed + investments + stock + debtors + cash + otherAssets;
+    const balanced = Math.abs(totalLiab - totalAssets) < 0.01;
+
+    document.getElementById('bs-output').innerHTML = `
+      <div class="alert ${balanced ? 'alert-success' : 'alert-error'}">${balanced ? '✓ Balance Sheet BALANCES — Assets = Liabilities + Capital' : `✗ Difference of ${fmt(Math.abs(totalLiab - totalAssets))} — Please recheck entries`}</div>
+      <div style="border:2px solid var(--ink);">
+        <div style="background:var(--ink);color:var(--paper);padding:14px 20px;font-family:'Playfair Display',serif;font-size:18px;text-align:center;font-weight:700;">Balance Sheet — as on Date</div>
+        <div class="bs-grid">
+          <div class="bs-side">
+            <h3>Liabilities</h3>
+            ${bsItem('Share Capital', capital)}
+            ${bsItem('Reserves & Surplus', reserves)}
+            ${bsItem('Long-term Borrowings', ltLoans)}
+            ${bsItem('Creditors / Payables', creditors)}
+            ${bsItem('Other Current Liabilities', otherLiab)}
+            <div class="bs-total"><span>TOTAL LIABILITIES</span><span>${fmt(totalLiab)}</span></div>
+          </div>
+          <div class="bs-side">
+            <h3>Assets</h3>
+            ${bsItem('Fixed Assets', fixed)}
+            ${bsItem('Investments', investments)}
+            ${bsItem('Inventories / Stock', stock)}
+            ${bsItem('Debtors / Receivables', debtors)}
+            ${bsItem('Cash & Bank', cash)}
+            ${bsItem('Other Current Assets', otherAssets)}
+            <div class="bs-total"><span>TOTAL ASSETS</span><span>${fmt(totalAssets)}</span></div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function bsItem(label, val) {
+    if (val === 0) return '';
+    return `<div class="bs-item"><span class="label">${label}</span><span class="value">${fmt(val)}</span></div>`;
+  }
+
+  // ---- Depreciation ----
+  function calcDepreciation() {
+    const asset = document.getElementById('dep-asset').value || 'Asset';
+    const cost = parseFloat(document.getElementById('dep-cost').value) || 0;
+    const salvage = parseFloat(document.getElementById('dep-salvage').value) || 0;
+    const life = parseInt(document.getElementById('dep-life').value) || 0;
+    const method = document.getElementById('dep-method').value;
+    const rate = parseFloat(document.getElementById('dep-rate').value) || 15;
+    const out = document.getElementById('dep-output');
+
+    if (cost <= 0 || life <= 0) {
+      out.innerHTML = '<div class="alert alert-error">Please enter valid cost and useful life.</div>'; return;
+    }
+
+    let rows = '', table = '';
+    if (method === 'slm') {
+      const annualDep = (cost - salvage) / life;
+      const depRate = ((cost - salvage) / cost / life * 100).toFixed(2);
+      for (let y = 1; y <= life; y++) {
+        const bookValue = Math.max(cost - y * annualDep, salvage);
+        rows += `<div class="dep-line"><span>Year ${y}</span><span class="val">${fmt(annualDep)}</span><span>${fmt(bookValue)}</span></div>`;
+      }
+      table = `
+        <div class="dep-result">
+          <h3>${escHtml(asset)} — Straight Line Method (SLM)</h3>
+          <div class="dep-line"><span>Cost of Asset</span><span class="val">${fmt(cost)}</span></div>
+          <div class="dep-line"><span>Salvage Value</span><span class="val">${fmt(salvage)}</span></div>
+          <div class="dep-line"><span>Depreciable Amount</span><span class="val">${fmt(cost - salvage)}</span></div>
+          <div class="dep-line"><span>Useful Life</span><span class="val">${life} Years</span></div>
+          <div class="dep-line"><span>Annual Depreciation</span><span class="val">${fmt(annualDep)}</span></div>
+          <div class="dep-line"><span>Depreciation Rate (SLM)</span><span class="val">${depRate}% p.a.</span></div>
+          <div style="margin-top:16px;font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Year-wise Schedule</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.1);">
+            <span>Year</span><span>Depreciation</span><span>W.D.V.</span>
+          </div>
+          ${rows}
+        </div>
+      `;
+    } else {
+      let bookValue = cost;
+      for (let y = 1; y <= life; y++) {
+        const rawDep = bookValue * (rate / 100);
+        const dep = Math.min(rawDep, Math.max(bookValue - salvage, 0));
+        bookValue -= dep;
+        rows += `<div class="dep-line"><span>Year ${y}</span><span class="val">${fmt(dep)}</span><span>${fmt(bookValue)}</span></div>`;
+        if (bookValue <= salvage) break;
+      }
+      table = `
+        <div class="dep-result">
+          <h3>${escHtml(asset)} — Written Down Value Method (WDV)</h3>
+          <div class="dep-line"><span>Cost of Asset</span><span class="val">${fmt(cost)}</span></div>
+          <div class="dep-line"><span>WDV Rate</span><span class="val">${rate}% p.a.</span></div>
+          <div style="margin-top:16px;font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Year-wise Schedule</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.1);">
+            <span>Year</span><span>Depreciation</span><span>W.D.V.</span>
+          </div>
+          ${rows}
+        </div>
+      `;
+    }
+    out.innerHTML = table;
+  }
+
+  // ---- GST ----
+  function calcGST() {
+    const type = document.getElementById('gst-type').value;
+    const rate = parseFloat(document.getElementById('gst-rate').value) || 0;
+    const amount = parseFloat(document.getElementById('gst-amount').value) || 0;
+    const qty = parseFloat(document.getElementById('gst-qty').value) || 1;
+    const out = document.getElementById('gst-output');
+
+    if (amount <= 0) { out.innerHTML = '<div class="alert alert-error">Please enter a valid base amount.</div>'; return; }
+
+    const base = amount * qty;
+    const gstAmount = base * (rate / 100);
+    const total = base + gstAmount;
+
+    let gstRows = '';
+    if (type === 'intra') {
+      const half = gstAmount / 2;
+      gstRows = `
+        <div class="gst-row header"><span>Tax Component</span><span>Rate</span><span>Base</span><span>Tax Amount</span></div>
+        <div class="gst-row"><span>CGST</span><span>${rate / 2}%</span><span>${fmt(base)}</span><span>${fmt(half)}</span></div>
+        <div class="gst-row"><span>SGST</span><span>${rate / 2}%</span><span>${fmt(base)}</span><span>${fmt(half)}</span></div>
+      `;
+    } else {
+      gstRows = `
+        <div class="gst-row header"><span>Tax Component</span><span>Rate</span><span>Base</span><span>Tax Amount</span></div>
+        <div class="gst-row"><span>IGST</span><span>${rate}%</span><span>${fmt(base)}</span><span>${fmt(gstAmount)}</span></div>
+      `;
+    }
+
+    out.innerHTML = `
+      <div class="gst-breakdown">
+        <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin-bottom:16px;">GST Calculation Summary</div>
+        ${gstRows}
+        <div class="gst-row" style="font-weight:700;border-top:2px solid var(--ink);font-size:13px;">
+          <span>TOTAL PAYABLE</span><span></span><span></span><span style="color:var(--saffron);">${fmt(total)}</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px;">
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);padding:16px;text-align:center;font-family:'DM Mono',monospace;border-radius:var(--radius-sm);">
+          <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;">Base Amount</div>
+          <div style="font-size:20px;font-weight:700;margin-top:6px;color:var(--text-primary);">${fmt(base)}</div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);padding:16px;text-align:center;font-family:'DM Mono',monospace;border-radius:var(--radius-sm);">
+          <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;">Total GST</div>
+          <div style="font-size:20px;font-weight:700;margin-top:6px;color:var(--red);">${fmt(gstAmount)}</div>
+        </div>
+        <div style="background:var(--ink);color:var(--paper);padding:16px;text-align:center;font-family:'DM Mono',monospace;border-radius:var(--radius-sm);">
+          <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;">Invoice Total</div>
+          <div style="font-size:20px;font-weight:700;margin-top:6px;color:var(--saffron);">${fmt(total)}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ═══════════════════════════════════════════════════
+  // INITIALISATION
+  // ═══════════════════════════════════════════════════
+  document.getElementById('j-date').value = new Date().toISOString().split('T')[0];
+  loadFromLocalStorage();
+  initTheme();
+  updateStatStrip();
+</script>
+</body>
+</html>
