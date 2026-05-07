@@ -48,6 +48,14 @@
       node.textContent = t(key);
     });
 
+    const optionNodes = document.querySelectorAll('#lang-switcher option[data-i18n]');
+    optionNodes.forEach(function(optionNode) {
+      const key = optionNode.getAttribute('data-i18n');
+      const translated = t(key);
+      optionNode.label = translated;
+      optionNode.textContent = translated;
+    });
+
     const ariaNodes = document.querySelectorAll('[data-i18n-aria-label]');
     ariaNodes.forEach(function(node) {
       const key = node.getAttribute('data-i18n-aria-label');
