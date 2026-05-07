@@ -48,14 +48,6 @@
       node.textContent = t(key);
     });
 
-    const optionNodes = document.querySelectorAll('#lang-switcher option[data-i18n]');
-    optionNodes.forEach(function(optionNode) {
-      const key = optionNode.getAttribute('data-i18n');
-      const translated = t(key);
-      optionNode.label = translated;
-      optionNode.textContent = translated;
-    });
-
     const ariaNodes = document.querySelectorAll('[data-i18n-aria-label]');
     ariaNodes.forEach(function(node) {
       const key = node.getAttribute('data-i18n-aria-label');
@@ -64,9 +56,15 @@
   }
 
   function syncLanguageSwitcher() {
-    const switcher = document.getElementById('lang-switcher');
-    if (!switcher) return;
-    switcher.value = currentLang;
+    const label = document.getElementById('lang-switcher-label');
+    const optionNodes = document.querySelectorAll('#lang-switcher-list [role="option"]');
+    if (!label || !optionNodes.length) return;
+
+    label.textContent = t('language.' + currentLang);
+    optionNodes.forEach(function(node) {
+      const selected = node.getAttribute('data-lang') === currentLang;
+      node.setAttribute('aria-selected', selected ? 'true' : 'false');
+    });
   }
 
   async function loadLanguage(lang) {
@@ -102,33 +100,88 @@
   }
 
   function attachLanguageSwitcher() {
-    const switcher = document.getElementById('lang-switcher');
-    if (!switcher) return;
+    const switcherButton = document.getElementById('lang-switcher-btn');
+    const switcherList = document.getElementById('lang-switcher-list');
+    const optionNodes = Array.prototype.slice.call(document.querySelectorAll('#lang-switcher-list [role="option"]'));
+    if (!switcherButton || !switcherList || !optionNodes.length) return;
 
-    switcher.addEventListener('change', function(event) {
-      setLanguage(event.target.value);
+    function setExpanded(expanded) {
+      switcherButton.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      switcherList.hidden = !expanded;
+      if (!expanded) return;
+
+      const selectedNode = optionNodes.find(function(node) {
+        return node.getAttribute('data-lang') === currentLang;
+      }) || optionNodes[0];
+
+      selectedNode.focus();
+    }
+
+    function chooseLanguage(lang) {
+      setLanguage(lang).catch(function(err) {
+        console.warn('i18n: failed to switch language', err);
+      });
+    }
+
+    function moveOptionFocus(step) {
+      const activeEl = document.activeElement;
+      const currentIndex = optionNodes.indexOf(activeEl);
+      const safeIndex = currentIndex === -1 ? 0 : currentIndex;
+      const nextIndex = (safeIndex + step + optionNodes.length) % optionNodes.length;
+      optionNodes[nextIndex].focus();
+    }
+
+    switcherButton.addEventListener('click', function() {
+      const expanded = switcherButton.getAttribute('aria-expanded') === 'true';
+      setExpanded(!expanded);
     });
 
-    switcher.addEventListener('keydown', function(event) {
-      const currentIndex = SUPPORTED_LANGS.indexOf(switcher.value);
+    switcherButton.addEventListener('keydown', function(event) {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        setExpanded(true);
+      }
+    });
+
+    switcherList.addEventListener('keydown', function(event) {
       if (event.key === 'ArrowDown') {
         event.preventDefault();
-        const nextIndex = (currentIndex + 1) % SUPPORTED_LANGS.length;
-        switcher.value = SUPPORTED_LANGS[nextIndex];
-        setLanguage(switcher.value);
+        moveOptionFocus(1);
       } else if (event.key === 'ArrowUp') {
         event.preventDefault();
-        const nextIndex = (currentIndex - 1 + SUPPORTED_LANGS.length) % SUPPORTED_LANGS.length;
-        switcher.value = SUPPORTED_LANGS[nextIndex];
-        setLanguage(switcher.value);
+        moveOptionFocus(-1);
       } else if (event.key === 'Home') {
         event.preventDefault();
-        switcher.value = SUPPORTED_LANGS[0];
-        setLanguage(switcher.value);
+        optionNodes[0].focus();
       } else if (event.key === 'End') {
         event.preventDefault();
-        switcher.value = SUPPORTED_LANGS[SUPPORTED_LANGS.length - 1];
-        setLanguage(switcher.value);
+        optionNodes[optionNodes.length - 1].focus();
+      } else if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        const activeEl = document.activeElement;
+        const lang = activeEl && activeEl.getAttribute('data-lang');
+        if (lang) {
+          chooseLanguage(lang);
+          setExpanded(false);
+          switcherButton.focus();
+        }
+      } else if (event.key === 'Escape' || event.key === 'Tab') {
+        setExpanded(false);
+        switcherButton.focus();
+      }
+    });
+
+    optionNodes.forEach(function(node) {
+      node.addEventListener('click', function() {
+        chooseLanguage(node.getAttribute('data-lang'));
+        setExpanded(false);
+        switcherButton.focus();
+      });
+    });
+
+    document.addEventListener('click', function(event) {
+      if (!switcherButton.contains(event.target) && !switcherList.contains(event.target)) {
+        setExpanded(false);
       }
     });
   }
