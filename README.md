@@ -191,7 +191,23 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for full contribution guidelines.
 
 ---
 
-## 📜 License
+## 🔒 Privacy & Data Security
+
+**All your financial data stays on your device — nothing is ever sent to any server.**
+
+- Journal entries, ledger data, and all financial records are stored exclusively in your browser's `localStorage`.
+- A **PIN-protected AES-256-GCM encryption layer** (using the browser's built-in Web Crypto API) encrypts all stored data. Your PIN is never written to disk; it lives only in `sessionStorage` for the current browser tab.
+- An **auto-lock** activates after 5 minutes of inactivity, clearing the in-memory key and reloading the page. A 30-second warning is shown before lock.
+- No analytics, no tracking, no cookies, no third-party data collection of any kind.
+- This tool works fully offline once the page has been loaded (font and SheetJS CDN are the only external requests, on first load).
+
+> **No Warranty:** This software is provided "AS IS" without warranty of any kind. The authors are not liable for any data loss, corruption, or damages arising from use. Always maintain your own backups of important financial data.
+
+> **Commercial License Required for Business Use:** Free for personal and educational use only. See [LICENSE](LICENSE) for details.
+
+---
+
+
 
 **© 2025 Indian Accounts Solver. All rights reserved.**
 

@@ -20,9 +20,27 @@
 <meta name="twitter:title" content="Indian Accounts Solver — भारतीय लेखा">
 <meta name="twitter:description" content="Indian accounting toolkit with journal, ledger, trial balance, P&amp;L, balance sheet, depreciation, and GST modules.">
 <meta name="twitter:url" content="https://indian-accounts.vercel.app/">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Noto+Sans:wght@300;400;600&family=Noto+Sans+Bengali:wght@300;400;600&family=Noto+Sans+Devanagari:wght@300;400;600&family=Noto+Sans+Kannada:wght@300;400;600&family=Noto+Sans+Tamil:wght@300;400;600&family=Noto+Sans+Telugu:wght@300;400;600&display=swap" rel="stylesheet">
-<!-- SheetJS CDN for Excel export -->
-<script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+<!--
+  Google Fonts — crossorigin required for font preconnect / CORS fetch.
+  NOTE: SRI (integrity=) is intentionally omitted for Google Fonts because Google
+  dynamically serves different CSS per User-Agent (woff vs woff2); the content
+  changes, so a fixed hash would always fail. Use crossorigin="anonymous" only.
+  To host fonts self-locally for full SRI, see: https://google-webfonts-helper.herokuapp.com
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="anonymous">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Noto+Sans:wght@300;400;600&family=Noto+Sans+Bengali:wght@300;400;600&family=Noto+Sans+Devanagari:wght@300;400;600&family=Noto+Sans+Kannada:wght@300;400;600&family=Noto+Sans+Tamil:wght@300;400;600&family=Noto+Sans+Telugu:wght@300;400;600&display=swap" rel="stylesheet" crossorigin="anonymous">
+<!--
+  SheetJS CDN — with Subresource Integrity (SRI).
+  Hash was computed with:
+    curl -sL https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js \
+      | openssl dgst -sha384 -binary | openssl base64 -A
+  If the hash below needs regeneration, run the command above and prefix with "sha384-".
+  IMPORTANT: Replace the placeholder hash before deploying to production.
+-->
+<script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"
+        integrity="sha384-REPLACE_WITH_ACTUAL_SHA384_HASH_SEE_COMMENT_ABOVE"
+        crossorigin="anonymous"></script>
 <style>
   /* ===========================================================
      INDIAN ACCOUNTS SOLVER — v3.0
@@ -1321,9 +1339,193 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
+
+  /* ── Privacy Banner ── */
+  .privacy-banner {
+    background: var(--accent-soft);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 8px 20px;
+    text-align: center;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text-secondary);
+    letter-spacing: 0.3px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  /* ── PIN Modal Overlay ── */
+  .pin-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .pin-modal {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    padding: 36px 32px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: var(--shadow-hover);
+    text-align: center;
+  }
+
+  .pin-modal-icon {
+    font-size: 42px;
+    margin-bottom: 12px;
+    line-height: 1;
+  }
+
+  .pin-modal h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+
+  .pin-modal p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  .pin-modal label {
+    display: block;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+
+  .pin-modal input[type="password"] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-input);
+    color: var(--text-primary);
+    font-size: 18px;
+    letter-spacing: 6px;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-text-security: disc;
+  }
+
+  .pin-modal input[type="password"]:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  .pin-error {
+    color: var(--red);
+    font-size: 12px;
+    min-height: 18px;
+    margin-bottom: 12px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .pin-modal .btn-pin-submit {
+    width: 100%;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--gradient-accent);
+    color: #fff;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s;
+  }
+
+  .pin-modal .btn-pin-submit:hover { opacity: 0.88; }
+
+  .pin-modal-footer {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 20px;
+    line-height: 1.5;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── Auto-lock Warning Toast ── */
+  .autolock-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 8000;
+    background: var(--bg-secondary);
+    border: 1.5px solid var(--accent-primary);
+    border-radius: var(--radius-md);
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: var(--shadow-hover);
+    min-width: 280px;
+    max-width: calc(100vw - 32px);
+  }
+
+  .autolock-toast-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .autolock-toast-body {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text-primary);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .btn-stay-active {
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    border: 1.5px solid var(--accent-primary);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--accent-primary);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .btn-stay-active:hover {
+    background: var(--accent-primary);
+    color: #fff;
+  }
+
+  @media (max-width: 480px) {
+    .pin-modal { padding: 28px 20px; }
+    .autolock-toast { flex-direction: column; text-align: center; }
+  }
 </style>
 </head>
 <body>
+
+<!-- ── Privacy Banner ────────────────────────────────────── -->
+<div class="privacy-banner" role="note" aria-label="Privacy notice">
+  <span data-i18n="security.banner">🔒 All data stays on your device. Nothing is sent to servers.</span>
+</div>
 
 <!-- ═══════════════════════════════════════
      HEADER
@@ -1820,6 +2022,33 @@
 </div><!-- #app-container -->
 
 <script src="/js/i18n.js"></script>
+<script src="/js/crypto-store.js"></script>
+<script src="/js/auto-lock.js"></script>
+
+<!-- ── PIN Entry / Setup Modal ────────────────────────────────────── -->
+<div id="pin-modal" class="pin-overlay" role="dialog" aria-modal="true" aria-labelledby="pin-modal-title" hidden>
+  <div class="pin-modal">
+    <div class="pin-modal-icon">🔐</div>
+    <h2 id="pin-modal-title" data-i18n="pin.modal.title">Enter Your PIN</h2>
+    <p id="pin-modal-subtitle" data-i18n="pin.modal.subtitle">Enter your PIN to access your financial data.</p>
+    <label for="pin-input" data-i18n="pin.modal.label">PIN (4–6 digits)</label>
+    <input type="password" id="pin-input" inputmode="numeric" pattern="\d{4,6}" maxlength="6" autocomplete="off" aria-required="true">
+    <div id="pin-confirm-group" hidden>
+      <label for="pin-confirm" data-i18n="pin.modal.confirmLabel">Confirm PIN</label>
+      <input type="password" id="pin-confirm" inputmode="numeric" pattern="\d{4,6}" maxlength="6" autocomplete="off" aria-required="true">
+    </div>
+    <p class="pin-error" id="pin-error" role="alert" aria-live="assertive"></p>
+    <button class="btn-pin-submit" id="pin-submit" type="button" data-i18n="pin.modal.submit">Unlock</button>
+    <p class="pin-modal-footer">🔒 Your PIN is never stored on disk. It exists only in this browser session.</p>
+  </div>
+</div>
+
+<!-- ── Auto-lock Warning Toast ───────────────────────────────────── -->
+<div id="autolock-toast" class="autolock-toast" role="alert" aria-live="assertive" aria-atomic="true" hidden aria-hidden="true">
+  <span class="autolock-toast-icon">⏳</span>
+  <span class="autolock-toast-body" data-autolock-msg data-i18n="lock.warning">Session locks in 30 seconds due to inactivity.</span>
+  <button class="btn-stay-active" id="autolock-stay" type="button" data-i18n="lock.stayActive">Stay Active</button>
+</div>
 <script>
   // ═══════════════════════════════════════════════════
   // STATE — declared first so all functions can access it
@@ -1941,25 +2170,45 @@
   // EXISTING JS — preserved exactly (zero regression)
   // ═══════════════════════════════════════════════════
 
-  // NEW: localStorage persistence — save all journal entries
-  function saveToLocalStorage() {
+  // NEW: localStorage persistence — save all journal entries (encrypts when PIN is active)
+  async function saveToLocalStorage() {
     try {
-      localStorage.setItem('indian_accounts_journal', JSON.stringify(journalEntries));
+      var data;
+      if (window.cryptoStore && cryptoStore.isUnlocked()) {
+        data = await cryptoStore.encrypt(journalEntries);
+      } else {
+        data = JSON.stringify(journalEntries);
+      }
+      localStorage.setItem('indian_accounts_journal', data);
     } catch(e) {
       console.warn('localStorage save failed:', e);
     }
   }
 
-  // NEW: Load entries from localStorage on startup
-  function loadFromLocalStorage() {
+  // NEW: Load entries from localStorage on startup (decrypts when PIN is active)
+  async function loadFromLocalStorage() {
     try {
       const saved = localStorage.getItem('indian_accounts_journal');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          journalEntries = parsed;
-          renderJournal();
+      if (!saved) { return; }
+
+      var parsed;
+      // Detect new encrypted format vs legacy plain JSON array
+      if (saved.charAt(0) === '{' && saved.indexOf('"iv"') !== -1) {
+        // Encrypted format — requires an unlocked cryptoStore
+        if (!window.cryptoStore || !cryptoStore.isUnlocked()) { return; }
+        parsed = await cryptoStore.decrypt(saved);
+      } else {
+        // Legacy plain JSON — migrate to encrypted on next save
+        parsed = JSON.parse(saved);
+      }
+
+      if (Array.isArray(parsed)) {
+        journalEntries = parsed;
+        // Migrate unencrypted legacy data into encrypted storage now
+        if (window.cryptoStore && cryptoStore.isUnlocked()) {
+          await saveToLocalStorage();
         }
+        renderJournal();
       }
     } catch(e) {
       console.warn('indian_accounts: Failed to parse saved journal data, starting fresh.', e);
@@ -2519,12 +2768,115 @@
       renderJournal();
     }
   });
-  loadFromLocalStorage();
   initTheme();
   if (window.i18n) {
     i18n.init();
   }
-  updateStatStrip();
+
+  // ── PIN / Crypto initialisation ──────────────────────
+  (function initPinFlow() {
+    var modal       = document.getElementById('pin-modal');
+    var titleEl     = document.getElementById('pin-modal-title');
+    var subtitleEl  = document.getElementById('pin-modal-subtitle');
+    var confirmGrp  = document.getElementById('pin-confirm-group');
+    var submitBtn   = document.getElementById('pin-submit');
+    var pinInput    = document.getElementById('pin-input');
+    var pinConfirm  = document.getElementById('pin-confirm');
+    var errorEl     = document.getElementById('pin-error');
+    var stayBtn     = document.getElementById('autolock-stay');
+
+    var isFirstVisit = !cryptoStore.hasPin();
+
+    function t(key, fallback) {
+      return (window.i18n && typeof i18n.t === 'function') ? i18n.t(key) : fallback;
+    }
+
+    function configureModal() {
+      if (isFirstVisit) {
+        titleEl.setAttribute('data-i18n', 'pin.modal.newTitle');
+        titleEl.textContent   = t('pin.modal.newTitle', 'Set Your PIN');
+        subtitleEl.setAttribute('data-i18n', 'pin.modal.newSubtitle');
+        subtitleEl.textContent = t('pin.modal.newSubtitle', 'Create a 4–6 digit PIN to protect your financial data.');
+        confirmGrp.hidden     = false;
+        submitBtn.setAttribute('data-i18n', 'pin.modal.set');
+        submitBtn.textContent = t('pin.modal.set', 'Set PIN & Continue');
+      } else {
+        titleEl.setAttribute('data-i18n', 'pin.modal.title');
+        titleEl.textContent   = t('pin.modal.title', 'Enter Your PIN');
+        subtitleEl.setAttribute('data-i18n', 'pin.modal.subtitle');
+        subtitleEl.textContent = t('pin.modal.subtitle', 'Enter your PIN to access your financial data.');
+        confirmGrp.hidden     = true;
+        submitBtn.setAttribute('data-i18n', 'pin.modal.submit');
+        submitBtn.textContent = t('pin.modal.submit', 'Unlock');
+      }
+      errorEl.textContent = '';
+    }
+
+    async function attemptUnlock() {
+      var pin = pinInput.value.trim();
+
+      if (!/^\d{4,6}$/.test(pin)) {
+        errorEl.textContent = t('pin.modal.invalid', 'PIN must be 4–6 digits.');
+        pinInput.focus();
+        return;
+      }
+
+      if (isFirstVisit) {
+        var conf = pinConfirm.value.trim();
+        if (pin !== conf) {
+          errorEl.textContent = t('pin.modal.mismatch', 'PINs do not match. Please try again.');
+          pinConfirm.value = '';
+          pinConfirm.focus();
+          return;
+        }
+      }
+
+      submitBtn.disabled = true;
+      errorEl.textContent = '';
+      try {
+        await cryptoStore.init(pin);
+        await loadFromLocalStorage();
+        modal.hidden = true;
+        modal.setAttribute('aria-hidden', 'true');
+        updateStatStrip();
+        autoLock.start();
+      } catch (err) {
+        // Wrong PIN causes AES-GCM decrypt to throw
+        if (!isFirstVisit) {
+          errorEl.textContent = t('pin.modal.wrongPin', 'Incorrect PIN. Please try again.');
+        } else {
+          errorEl.textContent = err.message || t('pin.modal.invalid', 'PIN must be 4–6 digits.');
+        }
+        pinInput.value = '';
+        pinInput.focus();
+      } finally {
+        submitBtn.disabled = false;
+      }
+    }
+
+    configureModal();
+    modal.hidden = false;
+    modal.removeAttribute('aria-hidden');
+    setTimeout(function () { pinInput.focus(); }, 80);
+
+    submitBtn.addEventListener('click', attemptUnlock);
+    pinInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { attemptUnlock(); }
+    });
+    pinConfirm.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { attemptUnlock(); }
+    });
+
+    // Re-apply i18n text if language changes while modal is visible
+    document.addEventListener('i18n:updated', configureModal);
+
+    // Stay-active button dismisses the warning toast and resets idle timer
+    if (stayBtn) {
+      stayBtn.addEventListener('click', function() {
+        if (window.autoLock) { autoLock.start(); }
+      });
+    }
+  }());
 </script>
 </body>
 </html>
