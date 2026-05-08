@@ -2205,7 +2205,7 @@ crossorigin="anonymous"></script>
       } catch (e) {
         console.warn('indian_accounts: Encrypted data decrypt failed.', e);
         var err = new Error('PIN verification failed.');
-        err.code = (e && e.code) ? e.code : 'IAS_WRONG_PIN';
+        err.code = (e && e.code) ? e.code : 'IAS_UNKNOWN';
         throw err;
       }
     } else {
@@ -2784,7 +2784,7 @@ crossorigin="anonymous"></script>
 
   // ── PIN / Crypto initialisation ──────────────────────
   function initPinFlow() {
-    // Suppress synthetic click fired right after touchend on mobile browsers.
+    // Suppress synthetic click fired after touchend (~300ms delay on some browsers) with a safety buffer.
     var TOUCH_CLICK_DEBOUNCE_MS = 450;
     var modal       = document.getElementById('pin-modal');
     var titleEl     = document.getElementById('pin-modal-title');
