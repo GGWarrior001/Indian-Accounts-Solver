@@ -111,9 +111,9 @@
       _key = null;
       sessionStorage.removeItem(SESSION_FLAG);
       console.warn('[cryptoStore] init failed', err);
-      var initErr = new Error('Unable to initialize secure storage.');
-      initErr.code = 'IAS_INIT_FAILED';
-      throw initErr;
+      var initError = new Error('Unable to initialize secure storage.');
+      initError.code = 'IAS_INIT_FAILED';
+      throw initError;
     }
   }
 
@@ -157,9 +157,9 @@
       return JSON.parse(dec.decode(plaintext));
     } catch (err) {
       console.warn('[cryptoStore] decrypt failed', err);
-      var decErr = new Error('Decryption failed. Wrong PIN or corrupted data.');
-      decErr.code = 'IAS_WRONG_PIN';
-      throw decErr;
+      var decryptError = new Error('Decryption failed. Wrong PIN or corrupted data.');
+      decryptError.code = 'IAS_WRONG_PIN';
+      throw decryptError;
     }
   }
 

@@ -2784,6 +2784,7 @@ crossorigin="anonymous"></script>
 
   // ── PIN / Crypto initialisation ──────────────────────
   function initPinFlow() {
+    // Suppress synthetic click fired right after touchend on mobile browsers.
     var TOUCH_CLICK_DEBOUNCE_MS = 450;
     var modal       = document.getElementById('pin-modal');
     var titleEl     = document.getElementById('pin-modal-title');
@@ -2887,7 +2888,10 @@ crossorigin="anonymous"></script>
     setTimeout(function () { pinInput.focus(); }, 80);
 
     function handleSubmitClick(e) {
-      if (Date.now() - lastTouchSubmitAt < TOUCH_CLICK_DEBOUNCE_MS) { return; }
+      if (Date.now() - lastTouchSubmitAt < TOUCH_CLICK_DEBOUNCE_MS) {
+        console.log('[PIN] submit click ignored after touchend debounce');
+        return;
+      }
       if (e) { e.preventDefault(); }
       attemptUnlock();
     }
@@ -2899,6 +2903,7 @@ crossorigin="anonymous"></script>
     }
 
     submitBtn.addEventListener('click', handleSubmitClick);
+    // passive:false is required because touch handler calls preventDefault().
     submitBtn.addEventListener('touchend', handleSubmitTouchEnd, { passive: false });
     pinInput.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') { attemptUnlock(); }
