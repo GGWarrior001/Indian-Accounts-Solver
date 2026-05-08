@@ -82,6 +82,13 @@ If you add or modify financial calculations, please cite the relevant rule or se
 - GST Act 2017
 - Indian GAAP / AS (Accounting Standards) issued by ICAI
 
-## 📄 License
+## 📜 License
 
-By contributing, you agree that your contributions will be licensed under the [MIT License](LICENSE).
+**© 2025 Indian Accounts Solver. All rights reserved.**
+
+This is **proprietary software** — free for personal use only.  
+Commercial use requires a paid license.
+
+📧 For commercial licensing: contact@indiaccountsolver.com
+
+[View Full License](LICENSE)
