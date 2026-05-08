@@ -40,6 +40,14 @@ NO WARRANTY:
 This software is provided "AS IS" without warranty of any kind.
 The authors are not liable for any damages arising from use.
 
+DATA & PRIVACY DISCLAIMER:
+All financial data (journal entries, ledger records, GST calculations)
+is stored exclusively in the user's browser localStorage using AES-256-GCM
+encryption. No data is transmitted to any server, third-party service, or
+external system. The authors make no guarantee of absolute security; users
+are solely responsible for the security of their device and browser.
+Always maintain independent backups of critical financial records.
+
 ═══════════════════════════════════════════════════════
 By using this software, you agree to these terms.
 ═══════════════════════════════════════════════════════

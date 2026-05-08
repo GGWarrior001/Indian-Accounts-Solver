@@ -149,5 +149,19 @@
   "common.placeholder.zero": "0",
   "common.placeholder.one": "1",
   "panel.rules.title": "Golden Rules of Indian Accounting",
-  "panel.rules.subtitle": "Traditional Double-Entry Bookkeeping"
+  "panel.rules.subtitle": "Traditional Double-Entry Bookkeeping",
+  "security.banner": "🔒 All data stays on your device. Nothing is sent to servers.",
+  "pin.modal.title": "Enter Your PIN",
+  "pin.modal.subtitle": "Enter your PIN to access your financial data.",
+  "pin.modal.newTitle": "Set Your PIN",
+  "pin.modal.newSubtitle": "Create a 4–6 digit PIN to protect your financial data.",
+  "pin.modal.label": "PIN (4–6 digits)",
+  "pin.modal.confirmLabel": "Confirm PIN",
+  "pin.modal.submit": "Unlock",
+  "pin.modal.set": "Set PIN & Continue",
+  "pin.modal.wrongPin": "Incorrect PIN. Please try again.",
+  "pin.modal.mismatch": "PINs do not match. Please try again.",
+  "pin.modal.invalid": "PIN must be 4–6 digits.",
+  "lock.warning": "Session locks in {seconds} seconds due to inactivity.",
+  "lock.stayActive": "Stay Active"
 }
