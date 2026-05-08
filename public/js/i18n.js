@@ -53,6 +53,18 @@
       const key = node.getAttribute('data-i18n-aria-label');
       node.setAttribute('aria-label', t(key));
     });
+
+    const placeholderNodes = document.querySelectorAll('[data-i18n-placeholder]');
+    placeholderNodes.forEach(function(node) {
+      const key = node.getAttribute('data-i18n-placeholder');
+      node.setAttribute('placeholder', t(key));
+    });
+
+    const titleNodes = document.querySelectorAll('[data-i18n-title]');
+    titleNodes.forEach(function(node) {
+      const key = node.getAttribute('data-i18n-title');
+      node.setAttribute('title', t(key));
+    });
   }
 
   function syncLanguageSwitcher() {
@@ -65,6 +77,11 @@
       const selected = node.getAttribute('data-lang') === currentLang;
       node.setAttribute('aria-selected', selected ? 'true' : 'false');
     });
+
+    const liveRegion = document.getElementById('lang-switcher-live');
+    if (liveRegion) {
+      liveRegion.textContent = t('language.changed', { language: t('language.' + currentLang) });
+    }
   }
 
   async function loadLanguage(lang) {
@@ -80,6 +97,7 @@
     document.documentElement.setAttribute('lang', currentLang);
     applyTranslations();
     syncLanguageSwitcher();
+    document.dispatchEvent(new CustomEvent('i18n:updated', { detail: { lang: currentLang } }));
   }
 
   async function setLanguage(lang) {
@@ -88,15 +106,22 @@
     await loadLanguage(next);
   }
 
-  function t(key) {
+  function formatMessage(message, params) {
+    if (!params || typeof params !== 'object') return message;
+    return String(message).replace(/\{(\w+)\}/g, function(_, name) {
+      return Object.prototype.hasOwnProperty.call(params, name) ? String(params[name]) : '{' + name + '}';
+    });
+  }
+
+  function t(key, params) {
     if (!key) return '';
+    let result = key;
     if (Object.prototype.hasOwnProperty.call(activeMessages, key)) {
-      return activeMessages[key];
+      result = activeMessages[key];
+    } else if (Object.prototype.hasOwnProperty.call(enMessages, key)) {
+      result = enMessages[key];
     }
-    if (Object.prototype.hasOwnProperty.call(enMessages, key)) {
-      return enMessages[key];
-    }
-    return key;
+    return formatMessage(result, params);
   }
 
   function attachLanguageSwitcher() {

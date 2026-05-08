@@ -2,7 +2,7 @@
 <html lang="en" data-theme="white">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <title data-i18n="meta.title">Indian Accounts Solver</title>
 <meta name="description" content="Indian accounting toolkit with journal, ledger, trial balance, P&amp;L, balance sheet, depreciation, and GST modules.">
 <link rel="canonical" href="https://indian-accounts.vercel.app/">
@@ -164,12 +164,22 @@
   /* ── Reset ── */
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  html {
+    height: 100%;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    width: 100%;
+  }
+
   /* ── Body ── */
   body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     font-family: 'Inter', 'Noto Sans', sans-serif;
     min-height: 100vh;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    width: 100%;
   }
 
   [data-theme="white"] body {
@@ -445,6 +455,8 @@
     padding: 32px 24px;
     position: relative;
     z-index: 1;
+    min-height: calc(100vh - var(--header-height));
+    box-sizing: border-box;
   }
 
   /* ════════════════════════════════════════════════════
@@ -535,8 +547,9 @@
   /* Module cards grid */
   .home-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
     gap: 16px;
+    padding-bottom: 20px;
   }
 
   .module-card {
@@ -558,6 +571,8 @@
       transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
       box-shadow 0.22s ease,
       border-color 0.22s ease;
+    min-width: 0;
+    flex-shrink: 0;
   }
 
   /* Gold/blue accent top bar */
@@ -1181,7 +1196,10 @@
     .logo-text h1 { font-size: 15px; }
     .logo-text p  { display: none; }
     .header-badge { display: none; }
-    .container { padding: 16px 12px; }
+    .container {
+      padding: 16px 12px 24px;
+      min-height: calc(100vh - var(--header-height-mobile));
+    }
     .form-grid { grid-template-columns: 1fr !important; }
     .ledger-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .ledger-table th:first-child,
@@ -1193,8 +1211,8 @@
     .bs-grid { grid-template-columns: 1fr !important; }
     .bs-side:first-child { border-right: none; border-bottom: 1px solid var(--border-subtle); }
     .btn-row { flex-wrap: wrap; }
-    .home-grid { grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 12px; }
-    .module-card { padding: 20px 16px; }
+    .home-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-bottom: 20px; }
+    .module-card { padding: 18px 14px; min-height: 148px; }
     .module-icon { font-size: 28px; }
     .module-name { font-size: 13px; }
     .card { padding: 20px 16px; }
@@ -1202,6 +1220,10 @@
     .home-title h2 { font-size: 20px; }
     .header-nav { padding: 0 8px; }
     .lang-switcher { min-width: 116px; font-size: 10px; padding-left: 10px; }
+  }
+
+  @media (max-width: 480px) {
+    .home-grid { grid-template-columns: 1fr; }
   }
 
   /* ── Reduced motion ── */
@@ -1257,9 +1279,10 @@
         <li class="lang-switcher-option" role="option" data-lang="bn" data-i18n="language.bn" tabindex="-1" aria-selected="false">বাংলা</li>
       </ul>
     </div>
-    <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle color theme">
+    <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" data-i18n-title="theme.toggle" data-i18n-aria-label="theme.toggleAria" title="Toggle theme" aria-label="Toggle color theme">
       <span id="theme-icon">🌙</span>
     </button>
+    <span id="lang-switcher-live" class="sr-only" aria-live="polite"></span>
   </div>
 </header>
 
@@ -1291,60 +1314,60 @@
     <!-- 8 module cards -->
     <div class="home-grid">
 
-      <div class="module-card" onclick="showModule('rules', '📖 Golden Rules')">
+      <div class="module-card" onclick="showModule('rules')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showModule('rules');}" data-i18n-aria-label="module.rules.aria">
         <div class="module-icon">📖</div>
-        <div class="module-name">Golden Rules</div>
-        <div class="module-name-hi">सुनहरे नियम</div>
-        <div class="module-desc">Real, Personal &amp; Nominal Accounts</div>
+        <div class="module-name" data-i18n="module.rules.title">Golden Rules</div>
+        <div class="module-name-hi" data-i18n="module.rules.subtitle">सुनहरे नियम</div>
+        <div class="module-desc" data-i18n="module.rules.desc">Real, Personal &amp; Nominal Accounts</div>
       </div>
 
-      <div class="module-card" onclick="showModule('journal', '📔 Journal Entry')">
+      <div class="module-card" onclick="showModule('journal')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showModule('journal');}" data-i18n-aria-label="module.journal.aria">
         <div class="module-icon">📔</div>
-        <div class="module-name">Journal Entry</div>
-        <div class="module-name-hi">रोजनामचा</div>
-        <div class="module-desc">Record every business transaction</div>
+        <div class="module-name" data-i18n="module.journal.title">Journal Entry</div>
+        <div class="module-name-hi" data-i18n="module.journal.subtitle">रोजनामचा</div>
+        <div class="module-desc" data-i18n="module.journal.desc">Record every business transaction</div>
       </div>
 
-      <div class="module-card" onclick="showModule('ledger', '📒 Ledger')">
+      <div class="module-card" onclick="showModule('ledger')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showModule('ledger');}" data-i18n-aria-label="module.ledger.aria">
         <div class="module-icon">📒</div>
-        <div class="module-name">Ledger</div>
-        <div class="module-name-hi">खाता बही</div>
-        <div class="module-desc">T-Account from Journal entries</div>
+        <div class="module-name" data-i18n="module.ledger.title">Ledger</div>
+        <div class="module-name-hi" data-i18n="module.ledger.subtitle">खाता बही</div>
+        <div class="module-desc" data-i18n="module.ledger.desc">T-Account from Journal entries</div>
       </div>
 
-      <div class="module-card" onclick="showModule('trial', '⚖️ Trial Balance')">
+      <div class="module-card" onclick="showModule('trial')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showModule('trial');}" data-i18n-aria-label="module.trial.aria">
         <div class="module-icon">⚖️</div>
-        <div class="module-name">Trial Balance</div>
-        <div class="module-name-hi">तलपट</div>
-        <div class="module-desc">Auto-generated from Journal entries</div>
+        <div class="module-name" data-i18n="module.trial.title">Trial Balance</div>
+        <div class="module-name-hi" data-i18n="module.trial.subtitle">तलपट</div>
+        <div class="module-desc" data-i18n="module.trial.desc">Auto-generated from Journal entries</div>
       </div>
 
-      <div class="module-card" onclick="showModule('pl', '📊 P&amp;L Account')">
+      <div class="module-card" onclick="showModule('pl')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showModule('pl');}" data-i18n-aria-label="module.pl.aria">
         <div class="module-icon">📊</div>
-        <div class="module-name">P&amp;L Account</div>
-        <div class="module-name-hi">लाभ-हानि खाता</div>
-        <div class="module-desc">Trading &amp; Profit &amp; Loss Account</div>
+        <div class="module-name" data-i18n="module.pl.title">P&amp;L Account</div>
+        <div class="module-name-hi" data-i18n="module.pl.subtitle">लाभ-हानि खाता</div>
+        <div class="module-desc" data-i18n="module.pl.desc">Trading &amp; Profit &amp; Loss Account</div>
       </div>
 
-      <div class="module-card" onclick="showModule('balance', '🏛️ Balance Sheet')">
+      <div class="module-card" onclick="showModule('balance')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showModule('balance');}" data-i18n-aria-label="module.balance.aria">
         <div class="module-icon">🏛️</div>
-        <div class="module-name">Balance Sheet</div>
-        <div class="module-name-hi">चिट्ठा</div>
-        <div class="module-desc">As per Schedule III, Companies Act 2013</div>
+        <div class="module-name" data-i18n="module.balance.title">Balance Sheet</div>
+        <div class="module-name-hi" data-i18n="module.balance.subtitle">चिट्ठा</div>
+        <div class="module-desc" data-i18n="module.balance.desc">As per Schedule III, Companies Act 2013</div>
       </div>
 
-      <div class="module-card" onclick="showModule('depreciation', '📉 Depreciation')">
+      <div class="module-card" onclick="showModule('depreciation')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showModule('depreciation');}" data-i18n-aria-label="module.depreciation.aria">
         <div class="module-icon">📉</div>
-        <div class="module-name">Depreciation</div>
-        <div class="module-name-hi">मूल्यह्रास</div>
-        <div class="module-desc">SLM &amp; WDV methods calculator</div>
+        <div class="module-name" data-i18n="module.depreciation.title">Depreciation</div>
+        <div class="module-name-hi" data-i18n="module.depreciation.subtitle">मूल्यह्रास</div>
+        <div class="module-desc" data-i18n="module.depreciation.desc">SLM &amp; WDV methods calculator</div>
       </div>
 
-      <div class="module-card" onclick="showModule('gst', '🧾 GST Calculator')">
+      <div class="module-card" onclick="showModule('gst')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showModule('gst');}" data-i18n-aria-label="module.gst.aria">
         <div class="module-icon">🧾</div>
-        <div class="module-name">GST Calculator</div>
-        <div class="module-name-hi">माल एवं सेवा कर</div>
-        <div class="module-desc">CGST + SGST / IGST as per GST Act 2017</div>
+        <div class="module-name" data-i18n="module.gst.title">GST Calculator</div>
+        <div class="module-name-hi" data-i18n="module.gst.subtitle">माल एवं सेवा कर</div>
+        <div class="module-desc" data-i18n="module.gst.desc">CGST + SGST / IGST as per GST Act 2017</div>
       </div>
 
     </div>
@@ -1372,8 +1395,8 @@
   <!-- RULES PANEL -->
   <div id="rules" class="panel active">
     <div class="card">
-      <h2>Golden Rules of Indian Accounting</h2>
-      <p class="subtitle">Traditional Double-Entry Bookkeeping — भारतीय लेखा के सुनहरे नियम</p>
+      <h2 data-i18n="panel.rules.title">Golden Rules of Indian Accounting</h2>
+      <p class="subtitle" data-i18n="panel.rules.subtitle">Traditional Double-Entry Bookkeeping — भारतीय लेखा के सुनहरे नियम</p>
       <div class="rules-grid">
         <div class="rule-card">
           <div class="rule-title">Real Account</div>
@@ -1420,75 +1443,75 @@
   <!-- JOURNAL PANEL -->
   <div id="journal" class="panel">
     <div class="card">
-      <h2>Journal Entry</h2>
-      <p class="subtitle">रोजनामचा — Record Every Business Transaction</p>
+      <h2 data-i18n="panel.journal.title">Journal Entry</h2>
+      <p class="subtitle" data-i18n="panel.journal.subtitle">रोजनामचा — Record Every Business Transaction</p>
       <div class="form-grid">
         <div>
-          <label>Date</label>
+          <label data-i18n="journal.label.date">Date</label>
           <input type="date" id="j-date">
         </div>
         <div>
-          <label>Voucher / Reference No.</label>
-          <input type="text" id="j-voucher" placeholder="e.g. JV-001">
+          <label data-i18n="journal.label.voucher">Voucher / Reference No.</label>
+          <input type="text" id="j-voucher" data-i18n-placeholder="journal.placeholder.voucher" placeholder="e.g. JV-001">
         </div>
         <div>
-          <label>Debit Account (Dr.)</label>
-          <input type="text" id="j-dr-account" placeholder="e.g. Cash A/c, Machinery A/c">
+          <label data-i18n="journal.label.drAccount">Debit Account (Dr.)</label>
+          <input type="text" id="j-dr-account" data-i18n-placeholder="journal.placeholder.drAccount" placeholder="e.g. Cash A/c, Machinery A/c">
         </div>
         <div>
-          <label>Debit Amount (₹)</label>
-          <input type="number" id="j-dr-amount" placeholder="0.00" min="0">
+          <label data-i18n="journal.label.drAmount">Debit Amount (₹)</label>
+          <input type="number" id="j-dr-amount" data-i18n-placeholder="journal.placeholder.amount" placeholder="0.00" min="0">
         </div>
         <div>
-          <label>Credit Account (Cr.)</label>
-          <input type="text" id="j-cr-account" placeholder="e.g. Bank A/c, Capital A/c">
+          <label data-i18n="journal.label.crAccount">Credit Account (Cr.)</label>
+          <input type="text" id="j-cr-account" data-i18n-placeholder="journal.placeholder.crAccount" placeholder="e.g. Bank A/c, Capital A/c">
         </div>
         <div>
-          <label>Credit Amount (₹)</label>
-          <input type="number" id="j-cr-amount" placeholder="0.00" min="0">
+          <label data-i18n="journal.label.crAmount">Credit Amount (₹)</label>
+          <input type="number" id="j-cr-amount" data-i18n-placeholder="journal.placeholder.amount" placeholder="0.00" min="0">
         </div>
       </div>
       <div>
-        <label>Narration (विवरण)</label>
-        <textarea id="j-narration" rows="2" placeholder="Being the amount paid for..."></textarea>
+        <label data-i18n="journal.label.narration">Narration (विवरण)</label>
+        <textarea id="j-narration" rows="2" data-i18n-placeholder="journal.placeholder.narration" placeholder="Being the amount paid for..."></textarea>
       </div>
       <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;" class="btn-row">
-        <button class="btn btn-primary" onclick="addJournalEntry()">+ Add Entry</button>
-        <button class="btn btn-secondary" onclick="clearJournal()">Clear All</button>
+        <button class="btn btn-primary" onclick="addJournalEntry()" data-i18n="journal.btn.add">+ Add Entry</button>
+        <button class="btn btn-secondary" onclick="clearJournal()" data-i18n="journal.btn.clear">Clear All</button>
         <div class="tooltip-wrap">
-          <button class="btn btn-secondary" onclick="loadSampleData()">📋 Load Sample Data</button>
-          <span class="tooltip-text">For testing only — does not overwrite existing data</span>
+          <button class="btn btn-secondary" onclick="loadSampleData()" data-i18n="journal.btn.loadSample">📋 Load Sample Data</button>
+          <span class="tooltip-text" data-i18n="journal.tooltip.loadSample">For testing only — does not overwrite existing data</span>
         </div>
-        <button class="btn btn-danger" onclick="clearSavedData()" style="font-size:12px;padding:12px 20px;">🗑 Clear Saved Data</button>
+        <button class="btn btn-danger" onclick="clearSavedData()" style="font-size:12px;padding:12px 20px;" data-i18n="journal.btn.clearSaved">🗑 Clear Saved Data</button>
       </div>
       <div id="j-alert"></div>
     </div>
 
     <div class="card">
-      <h2>Journal Book</h2>
-      <p class="subtitle">All Recorded Transactions</p>
+      <h2 data-i18n="journal.book.title">Journal Book</h2>
+      <p class="subtitle" data-i18n="journal.book.subtitle">All Recorded Transactions</p>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;" class="btn-row">
-        <button class="btn btn-secondary" onclick="exportCSV()">⬇ Export CSV</button>
-        <button class="btn btn-secondary" onclick="exportExcel()">⬇ Export Excel (.xlsx)</button>
+        <button class="btn btn-secondary" onclick="exportCSV()" data-i18n="journal.btn.exportCsv">⬇ Export CSV</button>
+        <button class="btn btn-secondary" onclick="exportExcel()" data-i18n="journal.btn.exportExcel">⬇ Export Excel (.xlsx)</button>
       </div>
       <div class="ledger-wrap">
         <table class="ledger-table">
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Particulars</th>
-              <th>L.F.</th>
-              <th class="num">Dr. Amount (₹)</th>
-              <th class="num">Cr. Amount (₹)</th>
+              <th data-i18n="journal.table.date">Date</th>
+              <th data-i18n="journal.table.particulars">Particulars</th>
+              <th data-i18n="journal.table.lf">L.F.</th>
+              <th class="num" data-i18n="journal.table.drAmount">Dr. Amount (₹)</th>
+              <th class="num" data-i18n="journal.table.crAmount">Cr. Amount (₹)</th>
               <th></th>
             </tr>
           </thead>
           <tbody id="journal-tbody">
-            <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--gold);font-family:'DM Mono',monospace;font-size:12px;">No entries yet. Add your first journal entry above.</td></tr>
+            <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--gold);font-family:'DM Mono',monospace;font-size:12px;" data-i18n="journal.table.empty">No entries yet. Add your first journal entry above.</td></tr>
           </tbody>
           <tfoot>
             <tr class="totals-row">
-              <td colspan="3" style="font-family:'DM Mono',monospace;font-size:12px;">TOTAL</td>
+              <td colspan="3" style="font-family:'DM Mono',monospace;font-size:12px;" data-i18n="journal.table.total">TOTAL</td>
               <td class="num amount-dr" id="j-total-dr">₹0.00</td>
               <td class="num amount-cr" id="j-total-cr">₹0.00</td>
               <td></td>
@@ -1502,14 +1525,14 @@
   <!-- LEDGER PANEL -->
   <div id="ledger" class="panel">
     <div class="card">
-      <h2>Ledger Account (T-Account)</h2>
-      <p class="subtitle">खाता बही — Post from Journal to Ledger</p>
+      <h2 data-i18n="panel.ledger.title">Ledger Account (T-Account)</h2>
+      <p class="subtitle" data-i18n="panel.ledger.subtitle">खाता बही — Post from Journal to Ledger</p>
       <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px;">
         <div style="flex:1;min-width:200px;">
-          <label>Account Name</label>
-          <input type="text" id="l-account-name" placeholder="e.g. Cash A/c, Sales A/c">
+          <label data-i18n="ledger.label.accountName">Account Name</label>
+          <input type="text" id="l-account-name" data-i18n-placeholder="ledger.placeholder.accountName" placeholder="e.g. Cash A/c, Sales A/c">
         </div>
-        <button class="btn btn-primary" onclick="generateLedger()">Generate Ledger</button>
+        <button class="btn btn-primary" onclick="generateLedger()" data-i18n="ledger.btn.generate">Generate Ledger</button>
       </div>
       <div id="ledger-output"></div>
     </div>
@@ -1518,9 +1541,9 @@
   <!-- TRIAL BALANCE PANEL -->
   <div id="trial" class="panel">
     <div class="card">
-      <h2>Trial Balance</h2>
-      <p class="subtitle">तलपट — Auto-generated from Journal Entries</p>
-      <button class="btn btn-primary" onclick="generateTrialBalance()" style="margin-bottom:20px;">Generate Trial Balance</button>
+      <h2 data-i18n="panel.trial.title">Trial Balance</h2>
+      <p class="subtitle" data-i18n="panel.trial.subtitle">तलपट — Auto-generated from Journal Entries</p>
+      <button class="btn btn-primary" onclick="generateTrialBalance()" style="margin-bottom:20px;" data-i18n="trial.btn.generate">Generate Trial Balance</button>
       <div id="trial-output"></div>
     </div>
   </div>
@@ -1528,52 +1551,52 @@
   <!-- P&L PANEL -->
   <div id="pl" class="panel">
     <div class="card">
-      <h2>Profit &amp; Loss Account</h2>
-      <p class="subtitle">लाभ-हानि खाता — As per Indian GAAP</p>
+      <h2 data-i18n="panel.pl.title">Profit &amp; Loss Account</h2>
+      <p class="subtitle" data-i18n="panel.pl.subtitle">लाभ-हानि खाता — As per Indian GAAP</p>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
         <div>
-          <label>Opening Stock (₹)</label>
-          <input type="number" id="pl-opening" placeholder="0" min="0">
+          <label data-i18n="pl.label.openingStock">Opening Stock (₹)</label>
+          <input type="number" id="pl-opening" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Closing Stock (₹)</label>
-          <input type="number" id="pl-closing" placeholder="0" min="0">
+          <label data-i18n="pl.label.closingStock">Closing Stock (₹)</label>
+          <input type="number" id="pl-closing" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Purchases (₹)</label>
-          <input type="number" id="pl-purchases" placeholder="0" min="0">
+          <label data-i18n="pl.label.purchases">Purchases (₹)</label>
+          <input type="number" id="pl-purchases" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Sales / Revenue (₹)</label>
-          <input type="number" id="pl-sales" placeholder="0" min="0">
+          <label data-i18n="pl.label.sales">Sales / Revenue (₹)</label>
+          <input type="number" id="pl-sales" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Direct Expenses (₹)</label>
-          <input type="number" id="pl-direct-exp" placeholder="0" min="0">
+          <label data-i18n="pl.label.directExpenses">Direct Expenses (₹)</label>
+          <input type="number" id="pl-direct-exp" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Returns Inward (₹)</label>
-          <input type="number" id="pl-returns-in" placeholder="0" min="0">
+          <label data-i18n="pl.label.returnsInward">Returns Inward (₹)</label>
+          <input type="number" id="pl-returns-in" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Wages &amp; Salaries (₹)</label>
-          <input type="number" id="pl-wages" placeholder="0" min="0">
+          <label data-i18n="pl.label.wages">Wages &amp; Salaries (₹)</label>
+          <input type="number" id="pl-wages" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Other Income (₹)</label>
-          <input type="number" id="pl-other-income" placeholder="0" min="0">
+          <label data-i18n="pl.label.otherIncome">Other Income (₹)</label>
+          <input type="number" id="pl-other-income" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Rent &amp; Rates (₹)</label>
-          <input type="number" id="pl-rent" placeholder="0" min="0">
+          <label data-i18n="pl.label.rent">Rent &amp; Rates (₹)</label>
+          <input type="number" id="pl-rent" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Depreciation (₹)</label>
-          <input type="number" id="pl-depreciation" placeholder="0" min="0">
+          <label data-i18n="pl.label.depreciation">Depreciation (₹)</label>
+          <input type="number" id="pl-depreciation" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
       </div>
-      <button class="btn btn-primary" onclick="calcPL()">Calculate P&amp;L</button>
+      <button class="btn btn-primary" onclick="calcPL()" data-i18n="pl.btn.calculate">Calculate P&amp;L</button>
       <div id="pl-output" style="margin-top:20px;"></div>
     </div>
   </div>
@@ -1581,57 +1604,57 @@
   <!-- BALANCE SHEET PANEL -->
   <div id="balance" class="panel">
     <div class="card">
-      <h2>Balance Sheet</h2>
-      <p class="subtitle">चिट्ठा — As per Schedule III, Companies Act 2013</p>
+      <h2 data-i18n="panel.balance.title">Balance Sheet</h2>
+      <p class="subtitle" data-i18n="panel.balance.subtitle">चिट्ठा — As per Schedule III, Companies Act 2013</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-        <div style="grid-column:1/-1;font-family:'DM Mono',monospace;font-size:11px;color:var(--saffron);text-transform:uppercase;letter-spacing:2px;padding:8px 0;border-bottom:1px solid var(--ledger);">LIABILITIES SIDE</div>
+        <div style="grid-column:1/-1;font-family:'DM Mono',monospace;font-size:11px;color:var(--saffron);text-transform:uppercase;letter-spacing:2px;padding:8px 0;border-bottom:1px solid var(--ledger);" data-i18n="balance.section.liabilities">LIABILITIES SIDE</div>
         <div>
-          <label>Share Capital (₹)</label>
-          <input type="number" id="bs-capital" placeholder="0" min="0">
+          <label data-i18n="balance.label.shareCapital">Share Capital (₹)</label>
+          <input type="number" id="bs-capital" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Reserves &amp; Surplus (₹)</label>
-          <input type="number" id="bs-reserves" placeholder="0" min="0">
+          <label data-i18n="balance.label.reserves">Reserves &amp; Surplus (₹)</label>
+          <input type="number" id="bs-reserves" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Long-term Borrowings (₹)</label>
-          <input type="number" id="bs-lt-loans" placeholder="0" min="0">
+          <label data-i18n="balance.label.longTermBorrowings">Long-term Borrowings (₹)</label>
+          <input type="number" id="bs-lt-loans" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Creditors / Payables (₹)</label>
-          <input type="number" id="bs-creditors" placeholder="0" min="0">
+          <label data-i18n="balance.label.creditors">Creditors / Payables (₹)</label>
+          <input type="number" id="bs-creditors" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Other Current Liabilities (₹)</label>
-          <input type="number" id="bs-other-liab" placeholder="0" min="0">
+          <label data-i18n="balance.label.otherCurrentLiabilities">Other Current Liabilities (₹)</label>
+          <input type="number" id="bs-other-liab" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
-        <div style="grid-column:1/-1;font-family:'DM Mono',monospace;font-size:11px;color:var(--green);text-transform:uppercase;letter-spacing:2px;padding:8px 0;border-bottom:1px solid var(--ledger);margin-top:8px;">ASSETS SIDE</div>
+        <div style="grid-column:1/-1;font-family:'DM Mono',monospace;font-size:11px;color:var(--green);text-transform:uppercase;letter-spacing:2px;padding:8px 0;border-bottom:1px solid var(--ledger);margin-top:8px;" data-i18n="balance.section.assets">ASSETS SIDE</div>
         <div>
-          <label>Fixed Assets (₹)</label>
-          <input type="number" id="bs-fixed" placeholder="0" min="0">
-        </div>
-        <div>
-          <label>Investments (₹)</label>
-          <input type="number" id="bs-investments" placeholder="0" min="0">
+          <label data-i18n="balance.label.fixedAssets">Fixed Assets (₹)</label>
+          <input type="number" id="bs-fixed" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Inventories / Stock (₹)</label>
-          <input type="number" id="bs-stock" placeholder="0" min="0">
+          <label data-i18n="balance.label.investments">Investments (₹)</label>
+          <input type="number" id="bs-investments" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Debtors / Receivables (₹)</label>
-          <input type="number" id="bs-debtors" placeholder="0" min="0">
+          <label data-i18n="balance.label.inventories">Inventories / Stock (₹)</label>
+          <input type="number" id="bs-stock" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Cash &amp; Bank (₹)</label>
-          <input type="number" id="bs-cash" placeholder="0" min="0">
+          <label data-i18n="balance.label.debtors">Debtors / Receivables (₹)</label>
+          <input type="number" id="bs-debtors" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Other Current Assets (₹)</label>
-          <input type="number" id="bs-other-assets" placeholder="0" min="0">
+          <label data-i18n="balance.label.cashBank">Cash &amp; Bank (₹)</label>
+          <input type="number" id="bs-cash" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
+        </div>
+        <div>
+          <label data-i18n="balance.label.otherCurrentAssets">Other Current Assets (₹)</label>
+          <input type="number" id="bs-other-assets" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
       </div>
-      <button class="btn btn-primary" onclick="calcBalanceSheet()">Generate Balance Sheet</button>
+      <button class="btn btn-primary" onclick="calcBalanceSheet()" data-i18n="balance.btn.generate">Generate Balance Sheet</button>
       <div id="bs-output" style="margin-top:20px;"></div>
     </div>
   </div>
@@ -1639,38 +1662,38 @@
   <!-- DEPRECIATION PANEL -->
   <div id="depreciation" class="panel">
     <div class="card">
-      <h2>Depreciation Calculator</h2>
-      <p class="subtitle">मूल्यह्रास — SLM &amp; WDV as per Companies Act &amp; Income Tax Act</p>
+      <h2 data-i18n="panel.depreciation.title">Depreciation Calculator</h2>
+      <p class="subtitle" data-i18n="panel.depreciation.subtitle">मूल्यह्रास — SLM &amp; WDV as per Companies Act &amp; Income Tax Act</p>
       <div class="form-grid">
         <div>
-          <label>Asset Name</label>
-          <input type="text" id="dep-asset" placeholder="e.g. Plant &amp; Machinery">
+          <label data-i18n="depreciation.label.assetName">Asset Name</label>
+          <input type="text" id="dep-asset" data-i18n-placeholder="depreciation.placeholder.assetName" placeholder="e.g. Plant &amp; Machinery">
         </div>
         <div>
-          <label>Cost of Asset (₹)</label>
-          <input type="number" id="dep-cost" placeholder="0" min="0">
+          <label data-i18n="depreciation.label.cost">Cost of Asset (₹)</label>
+          <input type="number" id="dep-cost" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Salvage / Scrap Value (₹)</label>
-          <input type="number" id="dep-salvage" placeholder="0" min="0">
+          <label data-i18n="depreciation.label.salvage">Salvage / Scrap Value (₹)</label>
+          <input type="number" id="dep-salvage" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Useful Life (Years)</label>
-          <input type="number" id="dep-life" placeholder="e.g. 10" min="1">
+          <label data-i18n="depreciation.label.usefulLife">Useful Life (Years)</label>
+          <input type="number" id="dep-life" data-i18n-placeholder="depreciation.placeholder.usefulLife" placeholder="e.g. 10" min="1">
         </div>
         <div>
-          <label>Method</label>
+          <label data-i18n="depreciation.label.method">Method</label>
           <select id="dep-method">
-            <option value="slm">SLM — Straight Line Method</option>
-            <option value="wdv">WDV — Written Down Value</option>
+            <option value="slm" data-i18n="depreciation.method.slm">SLM — Straight Line Method</option>
+            <option value="wdv" data-i18n="depreciation.method.wdv">WDV — Written Down Value</option>
           </select>
         </div>
         <div>
-          <label>WDV Rate (%) — for WDV only</label>
-          <input type="number" id="dep-rate" placeholder="e.g. 15" min="0" max="100">
+          <label data-i18n="depreciation.label.wdvRate">WDV Rate (%) — for WDV only</label>
+          <input type="number" id="dep-rate" data-i18n-placeholder="depreciation.placeholder.wdvRate" placeholder="e.g. 15" min="0" max="100">
         </div>
       </div>
-      <button class="btn btn-primary" onclick="calcDepreciation()">Calculate Depreciation</button>
+      <button class="btn btn-primary" onclick="calcDepreciation()" data-i18n="depreciation.btn.calculate">Calculate Depreciation</button>
       <div id="dep-output"></div>
     </div>
   </div>
@@ -1678,36 +1701,36 @@
   <!-- GST PANEL -->
   <div id="gst" class="panel">
     <div class="card">
-      <h2>GST Calculator</h2>
-      <p class="subtitle">माल एवं सेवा कर — CGST + SGST / IGST (as per GST Act 2017)</p>
+      <h2 data-i18n="panel.gst.title">GST Calculator</h2>
+      <p class="subtitle" data-i18n="panel.gst.subtitle">माल एवं सेवा कर — CGST + SGST / IGST (as per GST Act 2017)</p>
       <div class="form-grid">
         <div>
-          <label>Transaction Type</label>
+          <label data-i18n="gst.label.transactionType">Transaction Type</label>
           <select id="gst-type">
-            <option value="intra">Intra-State (CGST + SGST)</option>
-            <option value="inter">Inter-State (IGST)</option>
+            <option value="intra" data-i18n="gst.type.intra">Intra-State (CGST + SGST)</option>
+            <option value="inter" data-i18n="gst.type.inter">Inter-State (IGST)</option>
           </select>
         </div>
         <div>
-          <label>GST Rate (%)</label>
+          <label data-i18n="gst.label.rate">GST Rate (%)</label>
           <select id="gst-rate">
-            <option value="5">5% — Essential goods</option>
-            <option value="12">12% — Standard</option>
-            <option value="18" selected>18% — Most services</option>
-            <option value="28">28% — Luxury goods</option>
-            <option value="0">0% — Exempt</option>
+            <option value="5" data-i18n="gst.rate.5">5% — Essential goods</option>
+            <option value="12" data-i18n="gst.rate.12">12% — Standard</option>
+            <option value="18" selected data-i18n="gst.rate.18">18% — Most services</option>
+            <option value="28" data-i18n="gst.rate.28">28% — Luxury goods</option>
+            <option value="0" data-i18n="gst.rate.0">0% — Exempt</option>
           </select>
         </div>
         <div>
-          <label>Base Amount (₹) — Exclusive of GST</label>
-          <input type="number" id="gst-amount" placeholder="0" min="0">
+          <label data-i18n="gst.label.baseAmount">Base Amount (₹) — Exclusive of GST</label>
+          <input type="number" id="gst-amount" data-i18n-placeholder="common.placeholder.zero" placeholder="0" min="0">
         </div>
         <div>
-          <label>Quantity / Units</label>
-          <input type="number" id="gst-qty" placeholder="1" min="1" value="1">
+          <label data-i18n="gst.label.quantity">Quantity / Units</label>
+          <input type="number" id="gst-qty" data-i18n-placeholder="common.placeholder.one" placeholder="1" min="1" value="1">
         </div>
       </div>
-      <button class="btn btn-primary" onclick="calcGST()">Calculate GST</button>
+      <button class="btn btn-primary" onclick="calcGST()" data-i18n="gst.btn.calculate">Calculate GST</button>
       <div id="gst-output"></div>
     </div>
   </div>
@@ -1758,6 +1781,34 @@
   // ═══════════════════════════════════════════════════
   // ROUTING — Home Screen & Module Navigation
   // ═══════════════════════════════════════════════════
+  const MODULE_ICONS = {
+    rules: '📖',
+    journal: '📔',
+    ledger: '📒',
+    trial: '⚖️',
+    pl: '📊',
+    balance: '🏛️',
+    depreciation: '📉',
+    gst: '🧾'
+  };
+
+  function getModuleDisplayName(moduleId) {
+    const icon = MODULE_ICONS[moduleId] || '';
+    const title = window.i18n ? i18n.t('module.' + moduleId + '.title') : moduleId;
+    return icon ? icon + ' ' + title : title;
+  }
+
+  function updateBreadcrumbLabel(moduleIdOverride) {
+    var activeModuleId = moduleIdOverride;
+    if (!activeModuleId) {
+      var activePanel = document.querySelector('.panel.active');
+      activeModuleId = activePanel ? activePanel.id : '';
+    }
+    if (!activeModuleId) return;
+    var crumb = document.getElementById('breadcrumb-text');
+    crumb.textContent = getModuleDisplayName(activeModuleId);
+  }
+
   function showModule(moduleId, moduleName) {
     document.getElementById('home-screen').classList.add('hidden');
 
@@ -1775,7 +1826,7 @@
     backBtn.style.display  = 'flex';
     sep.style.display      = 'inline';
     crumb.style.display    = 'inline';
-    crumb.textContent      = moduleName;
+    crumb.textContent      = moduleName || getModuleDisplayName(moduleId);
 
     scrollTop();
   }
@@ -1990,7 +2041,8 @@
   function renderJournal() {
     const tbody = document.getElementById('journal-tbody');
     if (journalEntries.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--gold);font-family:\'DM Mono\',monospace;font-size:12px;">No entries yet. Add your first journal entry above.</td></tr>';
+      const emptyText = window.i18n ? i18n.t('journal.table.empty') : 'No entries yet. Add your first journal entry above.';
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--gold);font-family:\'DM Mono\',monospace;font-size:12px;">' + emptyText + '</td></tr>';
       document.getElementById('j-total-dr').textContent = '₹0.00';
       document.getElementById('j-total-cr').textContent = '₹0.00';
       return;
@@ -2378,6 +2430,14 @@
   // INITIALISATION
   // ═══════════════════════════════════════════════════
   document.getElementById('j-date').value = new Date().toISOString().split('T')[0];
+  document.addEventListener('i18n:updated', function() {
+    if (document.getElementById('app-container').classList.contains('visible')) {
+      updateBreadcrumbLabel();
+    }
+    if (journalEntries.length === 0) {
+      renderJournal();
+    }
+  });
   loadFromLocalStorage();
   initTheme();
   if (window.i18n) {
