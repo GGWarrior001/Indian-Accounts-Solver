@@ -191,9 +191,16 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for full contribution guidelines.
 
 ---
 
-## 📄 License
+## 📜 License
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+**© 2025 Indian Accounts Solver. All rights reserved.**
+
+This is **proprietary software** — free for personal use only.  
+Commercial use requires a paid license.
+
+📧 For commercial licensing: contact@indiaccountsolver.com
+
+[View Full License](LICENSE)
 
 ---
 
