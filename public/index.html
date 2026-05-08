@@ -2784,6 +2784,7 @@ crossorigin="anonymous"></script>
 
   // ── PIN / Crypto initialisation ──────────────────────
   function initPinFlow() {
+    var TOUCH_CLICK_DEBOUNCE_MS = 450;
     var modal       = document.getElementById('pin-modal');
     var titleEl     = document.getElementById('pin-modal-title');
     var subtitleEl  = document.getElementById('pin-modal-subtitle');
@@ -2867,7 +2868,7 @@ crossorigin="anonymous"></script>
         modal.hidden = false;
         modal.removeAttribute('aria-hidden');
         console.warn('[PIN] unlock flow failed', err);
-        if (!isFirstVisit && err && (err.code === 'IAS_WRONG_PIN' || err.code === 'OperationError')) {
+        if (!isFirstVisit && err && err.code === 'IAS_WRONG_PIN') {
           errorEl.textContent = t('pin.modal.wrongPin', 'Incorrect PIN. Please try again.');
         } else {
           errorEl.textContent = err.message || t('pin.modal.invalid', 'PIN must be 4–6 digits.');
@@ -2886,7 +2887,7 @@ crossorigin="anonymous"></script>
     setTimeout(function () { pinInput.focus(); }, 80);
 
     function handleSubmitClick(e) {
-      if (Date.now() - lastTouchSubmitAt < 450) { return; }
+      if (Date.now() - lastTouchSubmitAt < TOUCH_CLICK_DEBOUNCE_MS) { return; }
       if (e) { e.preventDefault(); }
       attemptUnlock();
     }
