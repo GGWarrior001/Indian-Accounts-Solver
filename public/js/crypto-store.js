@@ -101,8 +101,20 @@
       localStorage.setItem(SALT_KEY, buf2hex(saltBuf));
     }
 
-    _key = await deriveKey(pin, saltBuf);
-    sessionStorage.setItem(SESSION_FLAG, '1');
+    try {
+      console.log('[cryptoStore] init: deriving key');
+      _key = await deriveKey(pin, saltBuf);
+      sessionStorage.setItem(SESSION_FLAG, '1');
+      console.log('[cryptoStore] init: unlock active');
+      return true;
+    } catch (err) {
+      _key = null;
+      sessionStorage.removeItem(SESSION_FLAG);
+      console.warn('[cryptoStore] init failed', err);
+      var initErr = new Error('Unable to initialize secure storage.');
+      initErr.code = 'IAS_INIT_FAILED';
+      throw initErr;
+    }
   }
 
   /**
@@ -134,16 +146,21 @@
    */
   async function decrypt(stored) {
     if (!_key) { throw new Error('cryptoStore: call init(pin) first.'); }
-
-    var payload    = JSON.parse(stored);
-    var dec        = new TextDecoder();
-    var plaintext  = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: b642buf(payload.iv) },
-      _key,
-      b642buf(payload.ct)
-    );
-
-    return JSON.parse(dec.decode(plaintext));
+    try {
+      var payload    = JSON.parse(stored);
+      var dec        = new TextDecoder();
+      var plaintext  = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: b642buf(payload.iv) },
+        _key,
+        b642buf(payload.ct)
+      );
+      return JSON.parse(dec.decode(plaintext));
+    } catch (err) {
+      console.warn('[cryptoStore] decrypt failed', err);
+      var decErr = new Error('Decryption failed. Wrong PIN or corrupted data.');
+      decErr.code = 'IAS_WRONG_PIN';
+      throw decErr;
+    }
   }
 
   /**
