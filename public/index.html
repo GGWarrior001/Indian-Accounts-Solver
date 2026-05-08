@@ -31,6 +31,7 @@
     --radius-lg:            16px;
     --header-height:        72px;
     --header-height-mobile: 60px;
+    --header-inline-padding-mobile: 16px;
   }
 
   /* ── WHITE & GOLD THEME (Default) ── */
@@ -1197,7 +1198,7 @@
   /* ── Mobile responsiveness ── */
   @media (max-width: 768px) {
     header {
-      padding: 12px 16px 16px;
+      padding: 12px var(--header-inline-padding-mobile) 16px;
       min-height: auto;
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
@@ -1250,7 +1251,7 @@
       padding: 0 34px 0 12px;
     }
     .lang-switcher-list {
-      max-width: min(200px, calc(100vw - 32px));
+      max-width: min(200px, calc(100vw - (var(--header-inline-padding-mobile) * 2)));
       right: 0;
       left: auto;
     }
