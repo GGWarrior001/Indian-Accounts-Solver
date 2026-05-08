@@ -35,8 +35,8 @@
   function setToastMsg(secs) {
     var el  = getMsgEl();
     if (!el) { return; }
-    var msg = (window.i18n && typeof i18n.t === 'function')
-      ? i18n.t('lock.warning', { seconds: secs })
+    var msg = (window.i18n && typeof window.i18n.t === 'function')
+      ? window.i18n.t('lock.warning', { seconds: secs })
       : 'Session locks in ' + secs + ' seconds due to inactivity.';
     el.textContent = msg;
   }

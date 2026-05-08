@@ -2032,10 +2032,10 @@
     <h2 id="pin-modal-title" data-i18n="pin.modal.title">Enter Your PIN</h2>
     <p id="pin-modal-subtitle" data-i18n="pin.modal.subtitle">Enter your PIN to access your financial data.</p>
     <label for="pin-input" data-i18n="pin.modal.label">PIN (4–6 digits)</label>
-    <input type="password" id="pin-input" inputmode="numeric" pattern="\d{4,6}" maxlength="6" autocomplete="current-password" aria-required="true">
+    <input type="password" id="pin-input" inputmode="numeric" pattern="\d{4,6}" maxlength="6" autocomplete="off" aria-required="true">
     <div id="pin-confirm-group" hidden>
       <label for="pin-confirm" data-i18n="pin.modal.confirmLabel">Confirm PIN</label>
-      <input type="password" id="pin-confirm" inputmode="numeric" pattern="\d{4,6}" maxlength="6" autocomplete="new-password" aria-required="true">
+      <input type="password" id="pin-confirm" inputmode="numeric" pattern="\d{4,6}" maxlength="6" autocomplete="off" aria-required="true">
     </div>
     <p class="pin-error" id="pin-error" role="alert" aria-live="assertive"></p>
     <button class="btn-pin-submit" id="pin-submit" type="button" data-i18n="pin.modal.submit">Unlock</button>
