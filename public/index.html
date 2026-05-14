@@ -2862,7 +2862,7 @@ crossorigin="anonymous"></script>
       // this guard the await below throws an unreadable TypeError and the modal
       // appears to hang with no feedback. We fail loudly so the user knows why.
       if (!window.isSecureContext || !window.crypto?.subtle) {
-        errorEl.textContent = '🔒 Encryption unavailable. Please open this app over HTTPS (not file:// or plain HTTP).';
+        errorEl.textContent = '🔒 Run via HTTPS or localhost (not file://)';
         submitBtn.disabled  = true;   // keep disabled — this is an env problem, not a user error
         console.error('[PIN] SubtleCrypto unavailable. isSecureContext=%s', window.isSecureContext);
         return;
