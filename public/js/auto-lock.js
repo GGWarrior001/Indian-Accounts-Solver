@@ -21,6 +21,16 @@
   var _warnTimer      = null;
   var _countdownTimer = null;
 
+  // ── Fix #3 ──────────────────────────────────────────────────────────────────
+  // _isListening tracks whether the activity event listeners are currently
+  // attached to document. Without this flag, every call to start() — including
+  // the one inside the "Stay Active" button handler — adds a fresh set of
+  // listeners on top of the existing ones. After N presses, resetIdle() fires
+  // N times per user gesture, creating N parallel timer chains and a memory
+  // leak that grows for the entire session.
+  var _isListening = false;
+  // ────────────────────────────────────────────────────────────────────────────
+
   /* ── toast helpers ────────────────────────────────────── */
 
   function getToast() {
@@ -108,10 +118,28 @@
 
   var EVENTS = ['click', 'keydown', 'scroll', 'touchstart'];
 
+  // ─── Fix #3 ─────────────────────────────────────────────────────────────────
+  // start() is called in three places:
+  //   1. initPinFlow() → on successful PIN unlock
+  //   2. The "Stay Active" button click handler
+  //   3. Any future caller (e.g. after re-authentication)
+  //
+  // Original code attached new listeners every time without checking whether
+  // they were already registered. Because removeEventListener() requires the
+  // exact same function reference, and we always pass `resetIdle` (which is
+  // stable), deduplication is straightforward: skip addEventListener when
+  // _isListening is already true, and only reset the idle countdown.
+  // ────────────────────────────────────────────────────────────────────────────
   function start() {
-    EVENTS.forEach(function (ev) {
-      document.addEventListener(ev, resetIdle, { passive: true });
-    });
+    if (!_isListening) {
+      // First call (or call after stop()) — attach listeners once.
+      EVENTS.forEach(function (ev) {
+        document.addEventListener(ev, resetIdle, { passive: true });
+      });
+      _isListening = true;
+    }
+    // Always reset the countdown, whether this is a first-start or a
+    // "Stay Active" keepalive — this is the intended behaviour either way.
     resetIdle();
   }
 
@@ -120,6 +148,8 @@
     EVENTS.forEach(function (ev) {
       document.removeEventListener(ev, resetIdle);
     });
+    // Fix #3 — reset flag so start() re-attaches cleanly after a stop()
+    _isListening = false;
     hideWarning();
   }
 
