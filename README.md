@@ -197,6 +197,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for full contribution guidelines.
 
 - Journal entries, ledger data, and all financial records are stored exclusively in your browser's `localStorage`.
 - Data is stored in plain JSON within your browser's `localStorage` under `indian_accounts_journal`.
+- This local data is not encrypted; avoid storing highly sensitive records on shared devices.
 - Regular exports are strongly recommended as a backup practice.
 - No analytics, no tracking, no cookies, no third-party data collection of any kind.
 - This tool works fully offline once the page has been loaded (font and SheetJS CDN are the only external requests, on first load).
