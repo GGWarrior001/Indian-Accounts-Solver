@@ -41,6 +41,7 @@
 <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js" 
 integrity="sha384-7hwyYzxURfZMLwHgvEKrYEmM5tX+1DVWK5iDR4R69bOQeY90Q8B8n9Cobuyqybhw"
 crossorigin="anonymous"></script>
+<!-- ADDED: MODERN ANIMATIONS -->
 <style>
   /* ===========================================================
      INDIAN ACCOUNTS SOLVER — v3.0
@@ -250,7 +251,7 @@ crossorigin="anonymous"></script>
     to   { opacity: 1; transform: translateY(0);    }
   }
 
-  /* <!-- ADDED: MODERN ANIMATIONS --> */
+  /* ADDED: MODERN ANIMATIONS */
   @keyframes fadeSlideIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
   @keyframes scalePop { from { transform:scale(0.96); opacity:0; } to { transform:scale(1); opacity:1; } }
   @keyframes shimmer { 0% { background-position:-200% 0; } 100% { background-position:200% 0; } }
@@ -679,14 +680,14 @@ crossorigin="anonymous"></script>
   }
 
   /* Staggered entrance */
-  .module-card:nth-child(1) { animation: fadeUp 0.42s 0.05s cubic-bezier(0.4,0,0.2,1) both; }
-  .module-card:nth-child(2) { animation: fadeUp 0.42s 0.10s cubic-bezier(0.4,0,0.2,1) both; }
-  .module-card:nth-child(3) { animation: fadeUp 0.42s 0.15s cubic-bezier(0.4,0,0.2,1) both; }
-  .module-card:nth-child(4) { animation: fadeUp 0.42s 0.20s cubic-bezier(0.4,0,0.2,1) both; }
-  .module-card:nth-child(5) { animation: fadeUp 0.42s 0.25s cubic-bezier(0.4,0,0.2,1) both; }
-  .module-card:nth-child(6) { animation: fadeUp 0.42s 0.30s cubic-bezier(0.4,0,0.2,1) both; }
-  .module-card:nth-child(7) { animation: fadeUp 0.42s 0.35s cubic-bezier(0.4,0,0.2,1) both; }
-  .module-card:nth-child(8) { animation: fadeUp 0.42s 0.40s cubic-bezier(0.4,0,0.2,1) both; }
+  .module-card:nth-child(1) { animation: fadeSlideIn 0.42s 0.05s cubic-bezier(0.4,0,0.2,1) both; }
+  .module-card:nth-child(2) { animation: fadeSlideIn 0.42s 0.10s cubic-bezier(0.4,0,0.2,1) both; }
+  .module-card:nth-child(3) { animation: fadeSlideIn 0.42s 0.15s cubic-bezier(0.4,0,0.2,1) both; }
+  .module-card:nth-child(4) { animation: fadeSlideIn 0.42s 0.20s cubic-bezier(0.4,0,0.2,1) both; }
+  .module-card:nth-child(5) { animation: fadeSlideIn 0.42s 0.25s cubic-bezier(0.4,0,0.2,1) both; }
+  .module-card:nth-child(6) { animation: fadeSlideIn 0.42s 0.30s cubic-bezier(0.4,0,0.2,1) both; }
+  .module-card:nth-child(7) { animation: fadeSlideIn 0.42s 0.35s cubic-bezier(0.4,0,0.2,1) both; }
+  .module-card:nth-child(8) { animation: fadeSlideIn 0.42s 0.40s cubic-bezier(0.4,0,0.2,1) both; }
 
   /* ════════════════════════════════════════════════════
      APP CONTAINER  (modules; hidden until selected)
@@ -721,7 +722,7 @@ crossorigin="anonymous"></script>
     box-shadow: var(--shadow-card);
     position: relative;
     overflow: hidden;
-    animation: fadeUp 0.40s cubic-bezier(0.4, 0, 0.2, 1) both;
+    animation: scalePop 0.40s cubic-bezier(0.4, 0, 0.2, 1) both;
   }
 
   /* Gradient accent line at top */
@@ -824,9 +825,10 @@ crossorigin="anonymous"></script>
     top: 0; left: -100%;
     width: 60%; height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+    background-size: 200% 100%;
     transition: left 0.40s ease;
   }
-  .btn:hover::after { left: 140%; }
+  .btn:hover::after { left: 140%; animation: shimmer 1.1s linear; }
   .module-card, .card, .btn { transition: transform 0.22s cubic-bezier(0.4,0,0.2,1), box-shadow 0.22s ease; }
   .module-card:hover { transform: translateY(-4px) scale(1.015); box-shadow: var(--shadow-hover); }
   .btn:hover { transform: translateY(-1px); }
@@ -1985,11 +1987,11 @@ crossorigin="anonymous"></script>
   // NEW: localStorage persistence — save all journal entries (encrypts when PIN is active)
   function saveToLocalStorage() {
     try { localStorage.setItem('indian_accounts_journal', JSON.stringify(journalEntries)); }
-    catch(e) {
+    catch (e) {
       console.warn('localStorage save failed:', e);
       var alertEl = document.getElementById('j-alert');
       if (alertEl) {
-        alertEl.innerHTML = '<div class="alert alert-error">Could not save data to browser storage. Please export your entries now.</div>';
+        alertEl.innerHTML = '<div class="alert alert-error">Could not save data to browser storage (quota full or storage disabled). Please export your entries now.</div>';
       }
     }
   }
@@ -1999,25 +2001,27 @@ crossorigin="anonymous"></script>
     if (!saved) return;
     try {
       const parsed = JSON.parse(saved);
-      // Graceful fallback for legacy encrypted data
+      // Graceful fallback for legacy encrypted data (iv + ct were used by removed AES-GCM storage)
       if (
         parsed &&
         typeof parsed === 'object' &&
         !Array.isArray(parsed) &&
         typeof parsed.iv === 'string' &&
-        typeof parsed.ct === 'string'
+        typeof parsed.ct === 'string' &&
+        parsed.iv.length > 0 &&
+        parsed.ct.length > 0
       ) {
-        console.warn('Legacy encrypted data detected and cleared for plain storage. Please restore from your latest export backup if needed.');
+        console.warn('Previous encrypted data was found and cleared. Please import your latest backup to restore your entries.');
         localStorage.removeItem('indian_accounts_journal');
         journalEntries = [];
         var alertEl = document.getElementById('j-alert');
         if (alertEl) {
-          alertEl.innerHTML = '<div class="alert alert-info">Legacy encrypted data was cleared. Restore using your latest export backup if required.</div>';
+          alertEl.innerHTML = '<div class="alert alert-info">Previous encrypted data was found and cleared. Please import your latest backup to restore your entries.</div>';
         }
         return;
       }
       if (Array.isArray(parsed)) { journalEntries = parsed; renderJournal(); }
-    } catch(e) { console.warn('Failed to parse journal data, starting fresh.'); journalEntries = []; }
+    } catch (e) { console.warn('Failed to parse journal data, starting fresh.'); journalEntries = []; }
   }
 
   // NEW: Clear saved data from localStorage with confirmation
@@ -2605,7 +2609,7 @@ crossorigin="anonymous"></script>
 
   async function bootstrapApp() {
     initTheme();
-    if (window.i18n && typeof i18n.init === 'function') await i18n.init().catch(console.warn);
+    if (window.i18n && typeof i18n.init === 'function') await i18n.init().catch(function (err) { console.warn('i18n init failed:', err); });
     await loadFromLocalStorage();
     updateStatStrip();
   }
