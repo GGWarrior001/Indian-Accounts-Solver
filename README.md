@@ -214,7 +214,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for full contribution guidelines.
 This is **proprietary software** — free for personal use only.  
 Commercial use requires a paid license.
 
-📧 For commercial licensing: contact@indiaccountsolver.com
+📧 For commercial licensing: tharunkumar8073@gmail.com
 
 [View Full License](LICENSE)
 
