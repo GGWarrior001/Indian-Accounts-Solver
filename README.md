@@ -196,8 +196,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for full contribution guidelines.
 **All your financial data stays on your device — nothing is ever sent to any server.**
 
 - Journal entries, ledger data, and all financial records are stored exclusively in your browser's `localStorage`.
-- A **PIN-protected AES-256-GCM encryption layer** (using the browser's built-in Web Crypto API) encrypts all stored data. Your PIN is never written to disk; it lives only in `sessionStorage` for the current browser tab.
-- An **auto-lock** activates after 5 minutes of inactivity, clearing the in-memory key and reloading the page. A 30-second warning is shown before lock.
+- Data is stored in plain JSON within your browser's `localStorage` under `indian_accounts_journal`.
+- Regular exports are strongly recommended as a backup practice.
 - No analytics, no tracking, no cookies, no third-party data collection of any kind.
 - This tool works fully offline once the page has been loaded (font and SheetJS CDN are the only external requests, on first load).
 
